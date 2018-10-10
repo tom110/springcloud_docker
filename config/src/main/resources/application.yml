@@ -19,13 +19,15 @@ spring:
     config:
       server:
         git:
-          uri: http://tom@123.233.240.222:10101/r/cloud-repo.git
-          search-paths: config-repo
-          username: tom
-          password: litao
+          uri: https://github.com/tom110/springcloud-repo.git
+          search-paths: /config-repo
+          username: tom110
+          password: litao413801
+          skipSslValidation: true
+          force-pull: true
   rabbitmq:
       host: rabbitmq
-      port: 32771
+      port: 5672
       username: user
       password: password
 
