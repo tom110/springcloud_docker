@@ -5,7 +5,6 @@
 *.log
 
 # .gitignore for maven
-registry/target/
 target/
 
 # BlueJ files

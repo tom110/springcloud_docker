@@ -26,3 +26,9 @@ mvn clean package -Dmanven.test.skip=true docker:build
 mvn clean package -Dmanven.test.skip=true docker:build
 ```
 ==注意，如果dockerFile里的镜像是在server构建的，所以镜像连接要使用对应server的连接==
+
+## 在container里部署
+* 时要先建一个bridge模式的network，然后用--network参数制定网络，用--name做相应的dns
+* 此处注意，bridge模式是从docker0通讯的，也就是内部端口连接时-p暴露的端口不起作用，因为暴露端口实在eth0完成的
+
+![bridge示意图](https://upload-images.jianshu.io/upload_images/2146653-02f215b4e78a5eb4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/408/format/webp)
