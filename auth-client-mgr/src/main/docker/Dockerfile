@@ -1,4 +1,4 @@
-FROM localhost:5000/jdk8:slim
+FROM hub.c.163.com/tom110/jdk8:slim
 
 VOLUME /tmp
 ADD auth-client-mgr-1.0-SNAPSHOT.jar app.jar

@@ -1,7 +1,7 @@
 FROM hub.c.163.com/tom110/jdk8:slim
 
 VOLUME /tmp
-ADD auth-service-1.0-SNAPSHOT.jar app.jar
+ADD auth-client-server.jar app.jar
 RUN sh -c 'touch /app.jar'
 #EXPOSE 8761
 ENV JAVA_OPTS=""
