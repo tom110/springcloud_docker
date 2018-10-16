@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "auth-rest-service", fallback = AuthRestService.ServiceBClientFallback.class)
+@FeignClient(name = "auth-rest-service",url = "http://123.233.240.221:8084",fallback = AuthRestService.ServiceBClientFallback.class)
 public interface AuthRestService {
 
     @GetMapping(value = "/rest/serviceb")

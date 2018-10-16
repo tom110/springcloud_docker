@@ -1,16 +1,19 @@
 spring:
   application:
     name: cas-client
+  resources:
+    static-locations: classpath:/static
   thymeleaf:
+    prefix: classpath:/templates/
     cache: false
   rabbitmq:
-        host: rabbitmq
-        port: 32771
+        host: 123.233.240.221
+        port: 5672
         username: user
         password: password
   cloud:
     config:
-      uri: http://config:8888
+      uri: http://123.233.240.221:8888
       fail-fast: true
       username: user
       password: ${CONFIG_SERVER_PASSWORD:password}

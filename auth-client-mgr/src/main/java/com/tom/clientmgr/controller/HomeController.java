@@ -21,6 +21,10 @@ public class HomeController {
     private String auth_service_port;
     @Value("${auth-service.contextPath}")
     private String auth_service_contextPath;
+    @Value("${monitor.hostname}")
+    private String monitor_hostname;
+    @Value("${monitor.port}")
+    private String monitor_port;
 
     @RequestMapping("/")
     public String getPage(Model model) {
@@ -29,6 +33,8 @@ public class HomeController {
 
     @RequestMapping("/index")
     public String getIndexPage(Model model) {
+        model.addAttribute("monitorHostname",monitor_hostname);
+        model.addAttribute("monitorPort",monitor_port);
         model.addAttribute("authClientMgrHostname",auth_client_mgr_hostname);
         model.addAttribute("authClientMgrPort",auth_client_mgr_port);
         model.addAttribute("authClientMgrContextPath",auth_client_mgr_contextPath);
@@ -45,6 +51,8 @@ public class HomeController {
 
     @RequestMapping("/pages/{pagename}")
     public String redirectPage(@PathVariable String pagename, Model model){
+        model.addAttribute("monitorHostname",monitor_hostname);
+        model.addAttribute("monitorPort",monitor_port);
         model.addAttribute("authClientMgrHostname",auth_client_mgr_hostname);
         model.addAttribute("authClientMgrPort",auth_client_mgr_port);
         model.addAttribute("authClientMgrContextPath",auth_client_mgr_contextPath);
