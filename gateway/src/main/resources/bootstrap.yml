@@ -3,7 +3,7 @@ spring:
     name: gateway
   rabbitmq:
       host: rabbitmq
-      port: 32771
+      port: 5672
       username: user
       password: password
   cloud:
@@ -17,3 +17,14 @@ spring:
         max-interval: 10000
         multiplier: 2
         max-attempts: 10
+eureka:
+  instance:
+    #注册eureka客户端主机名
+    hostname: gateway
+    prefer-ip-address: false
+    metadata-map:
+      user.name: ${security.user.name}
+      user.password: ${security.user.password}
+  client:
+    service-url:
+      defaultZone: http://user:${REGISTRY_SERVER_PASSWORD:password}@registry:8761/eureka/

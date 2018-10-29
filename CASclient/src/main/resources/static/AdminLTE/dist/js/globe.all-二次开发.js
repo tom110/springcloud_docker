@@ -476,7 +476,7 @@ var Globe = function () {
      */
     this.assertOCX = function () {
         if (!(this._ocxObj && this._ocxObj.object)) {
-            //throw new exception('activeX控件加载失败，不能正常调用');
+            throw new exception('activeX控件加载失败，不能正常调用');
         }
     }
     /**

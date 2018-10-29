@@ -11,8 +11,9 @@ turbine:
 
 eureka:
   instance:
-    hostname: registry
-    prefer-ip-address: true
+    #注册eureka客户端主机名,monitor监视很有用，monitor用用户名带调用健康状态
+    hostname: monitor
+    prefer-ip-address: false
     metadata-map:
       user.name: ${security.user.name}
       user.password: ${security.user.password}

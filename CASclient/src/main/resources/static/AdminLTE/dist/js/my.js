@@ -1,6 +1,7 @@
 var globe = new Globe();
 var docName = "地图文档";
-var QueryURL = "gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型-ys";
+var QueryURL = "gdbp://MapGisLocal/Test1/sfcls/land_models";
+// var QueryURL = "GDBP://MapGisLocal/示例数据/ds/三维示例/sfcls/景观_建筑模型";
 var IP = "172.20.226.65";
 var port = "6163";
 var sceneID;
@@ -123,11 +124,12 @@ function addMap() {
         globe.removeAllDoc();
     }
     globe.goToSurfaceMode();//进入表面模式
-    sceneID = globe.addDoc("地图文档", IP, "6163", DocType.TypeG3D);
+    // globe.setEnvLight(0x99999999);
+    globe.setEnvLight(0x99999999);
+    sceneID = globe.addDoc(docName, IP, "6163", DocType.TypeG3D);
     globe.reset();//定位到模型所在位置
     //获取被切割图层的Range3D
     range3Dstr = globe.getSceneProperty(sceneID, 0, "Range3D");//只能获取模型图层的空间范围
-    QueryURL = "gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型-ys";
 }
 
 //加载钻孔
@@ -163,26 +165,51 @@ function addMap2() {
         removeCut();
         globe.removeAllDoc();
     }
-    mxmodelId = globe.appendGeomByUrl("gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型-ys", 0, IP, port);
+    mxmodelId = globe.appendGeomByUrl(QueryURL, 0, IP, port);
     commodelId=mxmodelId;
-    QueryURL="gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型-ys";
     globe.reset();
 }
 
 //加载DEM模型
 function addDEM() {
     globe.load();
-    if (sceneID > 0 || sceneID) {
-        globe.removeAllDoc();
-    }
+    // if (sceneID > 0 || sceneID) {
+    //     globe.removeAllDoc();
+    // }
     globe.goToSurfaceMode();
-    DEMID = globe.addDoc("威海", IP, port, DocType.TypeG3D);
+    DEMID = globe.addDoc("dem", IP, port, DocType.TypeG3D);
     if (DEMID < 0) {
         alert("加载失败！");
         return;
     }
-    globe.reset();
+
+
+    // globe.reset();
 }
+
+//移除DEM模型
+function removeDEM() {
+    // globe.load();
+    // if (sceneID > 0 || sceneID) {
+    //     var doc = globe.getDocByName("dem");
+    //     if (!doc)
+    //         return false;
+    //     return globe.removeDocById(doc.id);
+    // }
+    // globe.goToSurfaceMode();
+
+    if (sceneID > 0 || DEMID) {
+        globe.removeAllDoc();//清除一切模型体
+    }
+
+    sceneID = globe.addDoc(docName, IP, port, DocType.TypeG3D);
+    if (DEMID < 0) {
+        alert("加载失败！");
+        return;
+    }
+
+}
+
 //********加载模型和地层******end
 
 
@@ -216,8 +243,8 @@ function showFirst() {
         globe.removeAllDoc();
     }
     alert(first)
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + first, 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + first;
+    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + first, 0, IP, port);
+    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + first;
     globe.reset();
 }
 
@@ -234,19 +261,19 @@ function showSecond() {
         globe.removeAllDoc();
     }
     alert(second);
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + second, 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + second;
+    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + second, 0, IP, port);
+    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + second;
     globe.reset();
 
 }
 
 //执行任意面切割切割
 function ABSurfaceexeCut(alphaValue, beltaValue) {
-    var orgSFClsStr = "gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型-ys";
+    var orgSFClsStr = QueryURL;
     first = getUuid();
-    var leftSFClsStr = "gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + first;
+    var leftSFClsStr = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + first;
     second = getUuid();
-    var rightSFClsStr = "gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + second;
+    var rightSFClsStr = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + second;
 
     // var alphaValue = 0;
     // var beltaValue = 45;
@@ -360,11 +387,11 @@ function createpipeByDepthHeight(depth1, height1) {
 
 //隧道体切割
 function createpipeexeCut(depth1, height1) {
-    var orgSFClsStr = "gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型-ys";
+    var orgSFClsStr = QueryURL;
     pipeFirst=getUuid();
-    var leftSFClsStr_k = "gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + pipeFirst;
+    var leftSFClsStr_k = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeFirst;
     pipeSecond=getUuid();
-    var rightSFClsStr_k = "gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + pipeSecond;
+    var rightSFClsStr_k = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeSecond;
     // var pnts = "485710.625,4280000;486705.75,4282905;486678.125,4286303.5;487085.21875,4289067;486678.125,4286303.5;487085.21875,4289067"; //切割路线
     var ps="";
     var parray=JSON.parse(pnts).pntarray;
@@ -394,8 +421,8 @@ function showPipeFrist() {
         globe.removeAllDoc();
     }
     alert(pipeFirst)
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + pipeFirst, 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + pipeFirst;
+    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeFirst, 0, IP, port);
+    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeFirst;
     globe.reset();
 }
 
@@ -412,8 +439,8 @@ function showPipeSecond() {
         globe.removeAllDoc();
     }
     alert(pipeSecond)
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + pipeSecond, 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/地质模型_" + pipeSecond;
+    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeSecond, 0, IP, port);
+    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeSecond;
     globe.reset();
 }
 
@@ -604,8 +631,8 @@ function addcutModel() {
     if (sceneID > 0 || DEMID) {
         globe.removeAllDoc();
     }
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/b1", 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/b1";
+    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/b1", 0, IP, port);
+    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/b1";
     globe.reset();
 }
 
@@ -944,8 +971,12 @@ function queryPolygonsCallback_modle(data) {
 
 //高亮显示
 function sparkModel(objid) {
-    var info = "LayerIndex:"+"0"+",ObjID:" + objid + ",SddHandle:" + sceneID;
+    // globe.load();
+
+    var info = "LayerIndex:0,ObjID:" + objid + ",SddHandle:" + sceneID;
     globe.startModelDiplay(info, 1, true);
+    // var info = {"sddentity":sceneID,"layerindex":0,"oid":objid,"visible":true};
+    // globe.setSceneNode(info);
 }
 
 function stopPickModelReady() {
@@ -977,7 +1008,7 @@ function modelQuery(flag, x, y, dx, dy, dz) {
     //要素结果集每页的记录数量
     queryParam.pageCount = '1000';
     //被查询图层的gdbpUrl
-    queryParam.gdbp = encodeURI("gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/查询区_新0706");
+    queryParam.gdbp = encodeURI(QueryURL);
     //设置查询条件
     queryParam.geometryType = 'Point3D';
     //点的坐标
