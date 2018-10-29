@@ -1,0 +1,168 @@
+version: "3"
+
+services:
+  redis:
+      image: repo:5006/redis
+      deploy:
+        replicas: 1
+      ports:
+        - "6379:6379"
+      hostname: "redis"
+      networks:
+        - webnet
+  rabbitmq:
+    image: repo:5006/rabbitmq
+    deploy:
+      replicas: 1
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"
+      - "4369:4369"
+      - "5671:5671"
+      - "25672:25672"
+    hostname: "rabbitmq"
+    networks:
+      - webnet
+  registry:
+    image: repo:5006/registry
+    deploy:
+      replicas: 1
+    ports:
+      - "8761:8761"
+    hostname: "registry"
+    networks:
+      - webnet
+
+  config:
+    depends_on:
+      - registry
+    image: repo:5006/config
+    deploy:
+      replicas: 1
+    ports:
+      - "8888:8888"
+    hostname: "config"
+    networks:
+      - webnet
+
+  monitor:
+    depends_on:
+      - registry
+    image: repo:5006/monitor
+    hostname: "monitor"
+    deploy:
+      replicas: 1
+    ports:
+      - "8040:8040"
+      - "8041:8041"
+    networks:
+      - webnet
+
+  zipkin:
+    depends_on:
+      - registry
+    image: repo:5006/zipkin
+    deploy:
+      replicas: 1
+    ports:
+      - "9411:9411"
+    hostname: "zipkin"
+    networks:
+      - webnet
+
+  auth-service:
+    depends_on:
+      - registry
+      - config
+    image: repo:5006/auth-service
+    deploy:
+      replicas: 1
+    ports:
+      - "5000:5000"
+    hostname: "auth-service"
+    networks:
+      - webnet
+
+  auth-client-mgr:
+    depends_on:
+      - registry
+      - config
+    image: repo:5006/auth-client-mgr
+    deploy:
+      replicas: 1
+    ports:
+      - "8083:8083"
+    hostname: "auth-client-mgr"
+    networks:
+  auth-client-server:
+    depends_on:
+      - registry
+      - config
+    image: repo:5006/auth-client-server
+    deploy:
+      replicas: 1
+    ports:
+      - "5003:5003"
+    hostname: "auth-client-server"
+    networks:
+      - webnet
+
+  auth-rest-service:
+    depends_on:
+      - registry
+      - config
+    image: repo:5006/auth-rest-service
+    deploy:
+      replicas: 1
+    ports:
+      - "8084:8084"
+    hostname: "auth-rest-service"
+    networks:
+      - webnet
+
+  cas-server:
+    depends_on:
+      - registry
+      - config
+    image: repo:5006/cas-server
+    deploy:
+      replicas: 1
+    ports:
+      - "8081:8081"
+    hostname: "cas-server"
+    networks:
+      - webnet
+
+  gateway:
+    depends_on:
+      - registry
+    image: repo:5006/gateway
+    deploy:
+      replicas: 1
+    ports:
+      - "8060:8060"
+    hostname: "gateway"
+    networks:
+      - webnet
+
+  visualizer:
+    image: localhost:5006/visualizer
+    ports:
+      - "8080:8080"
+    hostname: "visualizer"
+    environment:
+      DOCKER_HOST: 123.233.240.221:2376
+      DOCKER_TLS_VERIFY: 1
+    volumes:
+      - "/root/CA:/root/.docker"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+
+networks:
+  webnet:
