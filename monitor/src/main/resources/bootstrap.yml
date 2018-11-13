@@ -11,7 +11,7 @@ turbine:
 
 eureka:
   instance:
-    #注册eureka客户端主机名,monitor监视很有用，monitor用用户名带调用健康状态
+    #注册eureka客户端主机名,monitor监视很有用，monitor用主机名调用健康状态
     hostname: monitor
     prefer-ip-address: false
     metadata-map:

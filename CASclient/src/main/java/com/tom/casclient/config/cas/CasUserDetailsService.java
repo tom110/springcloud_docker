@@ -38,7 +38,7 @@ public class CasUserDetailsService implements AuthenticationUserDetailsService<C
 //        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         List<String> authoritiyNames= authRestService.getAuthorities(username);
         for(String n : authoritiyNames){
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + n));
+            authorities.add(new SimpleGrantedAuthority(n));
         }
         return new User(username, username, authorities);
     }

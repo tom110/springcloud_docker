@@ -4,16 +4,35 @@ services:
   redis:
       image: repo:5006/redis
       deploy:
+        placement:
+          constraints: [node.role == worker]
         replicas: 1
+        resources:
+          limits:
+            cpus: "1"
+            memory: 1000M
+          reservations:
+            cpus: "0.2"
+            memory: 450M
       ports:
         - "6379:6379"
       hostname: "redis"
       networks:
         - webnet
+
   rabbitmq:
     image: repo:5006/rabbitmq
     deploy:
+      placement:
+        constraints: [node.role == worker]
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1000M
+        reservations:
+          cpus: "0.2"
+          memory: 450M
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
@@ -25,10 +44,20 @@ services:
     hostname: "rabbitmq"
     networks:
       - webnet
+
   registry:
     image: repo:5006/registry
     deploy:
+      placement:
+        constraints: [node.role == worker]
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1000M
+        reservations:
+          cpus: "0.2"
+          memory: 450M
     ports:
       - "8761:8761"
     hostname: "registry"
@@ -41,6 +70,15 @@ services:
     image: repo:5006/config
     deploy:
       replicas: 1
+      placement:
+        constraints: [node.role == worker]
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1000M
+        reservations:
+          cpus: "0.2"
+          memory: 450M
     ports:
       - "8888:8888"
     hostname: "config"
@@ -53,7 +91,16 @@ services:
     image: repo:5006/monitor
     hostname: "monitor"
     deploy:
+      placement:
+        constraints: [node.role == worker]
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1000M
+        reservations:
+          cpus: "0.2"
+          memory: 450M
     ports:
       - "8040:8040"
       - "8041:8041"
@@ -65,7 +112,16 @@ services:
       - registry
     image: repo:5006/zipkin
     deploy:
+      placement:
+        constraints: [node.role == worker]
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1000M
+        reservations:
+          cpus: "0.2"
+          memory: 450M
     ports:
       - "9411:9411"
     hostname: "zipkin"
@@ -79,6 +135,8 @@ services:
     image: repo:5006/auth-service
     deploy:
       replicas: 1
+      placement:
+        constraints: [node.role == manager]
     ports:
       - "5000:5000"
     hostname: "auth-service"
@@ -92,10 +150,14 @@ services:
     image: repo:5006/auth-client-mgr
     deploy:
       replicas: 1
+      placement:
+        constraints: [node.role == manager]
     ports:
       - "8083:8083"
     hostname: "auth-client-mgr"
     networks:
+      - webnet
+
   auth-client-server:
     depends_on:
       - registry
@@ -103,6 +165,8 @@ services:
     image: repo:5006/auth-client-server
     deploy:
       replicas: 1
+      placement:
+        constraints: [node.role == manager]
     ports:
       - "5003:5003"
     hostname: "auth-client-server"
@@ -116,6 +180,8 @@ services:
     image: repo:5006/auth-rest-service
     deploy:
       replicas: 1
+      placement:
+        constraints: [node.role == manager]
     ports:
       - "8084:8084"
     hostname: "auth-rest-service"
@@ -129,6 +195,8 @@ services:
     image: repo:5006/cas-server
     deploy:
       replicas: 1
+      placement:
+        constraints: [node.role == manager]
     ports:
       - "8081:8081"
     hostname: "cas-server"
@@ -141,6 +209,13 @@ services:
     image: repo:5006/gateway
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1000M
+        reservations:
+          cpus: "0.2"
+          memory: 450M
     ports:
       - "8060:8060"
     hostname: "gateway"
@@ -161,6 +236,13 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1000M
+        reservations:
+          cpus: "0.2"
+          memory: 450M
     networks:
       - webnet
 

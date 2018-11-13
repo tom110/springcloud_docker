@@ -1,11 +1,13 @@
 var globe = new Globe();
 var docName = "地图文档";
 var QueryURL = "gdbp://MapGisLocal/Test1/sfcls/land_models";
+var duanceng="gdbp://MapGisLocal/model_new/sfcls/entity_2952";
 // var QueryURL = "GDBP://MapGisLocal/示例数据/ds/三维示例/sfcls/景观_建筑模型";
 var IP = "172.20.226.65";
 var port = "6163";
 var sceneID;
 var DEMID;
+var DUANCENGID;
 var map;
 var helpGeometry;
 var range3Dstr = "";
@@ -28,12 +30,10 @@ var dotarr = [];
 
 //地球载入初始化
 function init() {
-
     // alert(window.innerHeight - 50);
     $("#macher2").css("height", window.innerHeight - 50)
 
     globe.load();
-
     mapId_img = globe.addTianditu("img");
     mapId_cia = globe.addTianditu("cia");
     //
@@ -88,7 +88,7 @@ function init() {
         alert("加载地图失败！");
     }
 
-
+    alert(globe.getVersionNumber());
     // setTimeout("jump()",8000);
 
     //globe.goToSurfaceMode();
@@ -131,6 +131,46 @@ function addMap() {
     //获取被切割图层的Range3D
     range3Dstr = globe.getSceneProperty(sceneID, 0, "Range3D");//只能获取模型图层的空间范围
 }
+
+function addMapKuai() {
+    DEMID = globe.addDoc(docName, IP, port, DocType.TypeG3D);
+    if (DEMID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL="gdbp://MapGisLocal/Test1/sfcls/land_models";
+}
+
+function removeMap(){
+    globe.load();
+    if (sceneID > 0 || sceneID) {
+        var doc = globe.getDocByName(docName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+}
+
+function addDuan() {
+    DUANCENGID = globe.addDoc("断层", IP, port, DocType.TypeG3D);
+    if (DUANCENGID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL=duanceng;
+}
+
+function removeDuan() {
+    globe.load();
+    if (DUANCENGID > 0 || DUANCENGID) {
+        var doc = globe.getDocByName("断层");
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+}
+
+
 
 //加载钻孔
 function addMap1() {
@@ -176,7 +216,7 @@ function addDEM() {
     // if (sceneID > 0 || sceneID) {
     //     globe.removeAllDoc();
     // }
-    globe.goToSurfaceMode();
+    // globe.goToSurfaceMode();
     DEMID = globe.addDoc("dem", IP, port, DocType.TypeG3D);
     if (DEMID < 0) {
         alert("加载失败！");
@@ -189,24 +229,24 @@ function addDEM() {
 
 //移除DEM模型
 function removeDEM() {
-    // globe.load();
-    // if (sceneID > 0 || sceneID) {
-    //     var doc = globe.getDocByName("dem");
-    //     if (!doc)
-    //         return false;
-    //     return globe.removeDocById(doc.id);
-    // }
+    globe.load();
+    if (sceneID > 0 || sceneID) {
+        var doc = globe.getDocByName("dem");
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
     // globe.goToSurfaceMode();
 
-    if (sceneID > 0 || DEMID) {
-        globe.removeAllDoc();//清除一切模型体
-    }
-
-    sceneID = globe.addDoc(docName, IP, port, DocType.TypeG3D);
-    if (DEMID < 0) {
-        alert("加载失败！");
-        return;
-    }
+    // if (sceneID > 0 || DEMID) {
+    //     globe.removeAllDoc();//清除一切模型体
+    // }
+    //
+    // sceneID = globe.addDoc(docName, IP, port, DocType.TypeG3D);
+    // if (DEMID < 0) {
+    //     alert("加载失败！");
+    //     return;
+    // }
 
 }
 
@@ -961,7 +1001,8 @@ function queryPolygonsCallback_modle(data) {
             // globe.startModelDiplay(info, 2, true);
             var att = data.AttStruct.FldName[0];
             var vaule = data.SFEleArray[0].AttValue[0];
-            content.getElementById("attrs").innerHTML+="<li data='"+objid+"' role='presentation'><a href='#'>"+objid+":"+att + "：" + vaule+"</a></li>";
+            // content.getElementById("attrs").innerHTML+="<li data='"+objid+"' role='presentation'><a href='#'>"+objid+":"+att + "：" + vaule+"</a></li>";
+            content.getElementById("attrs").innerHTML+="<li data='"+objid+"' role='presentation'><a href='#'>"+objid+":"+"块体名称：" + "块体" + objid+"</a></li>";
             // alert(att + "：" + vaule);
         }
         FloodControl.window.ac()
@@ -973,15 +1014,21 @@ function queryPolygonsCallback_modle(data) {
 function sparkModel(objid) {
     // globe.load();
 
-    var info = "LayerIndex:0,ObjID:" + objid + ",SddHandle:" + sceneID;
+    var info = "LayerIndex:0,ObjID:" + objid + ",SddHandle:" + DUANCENGID;
     globe.startModelDiplay(info, 1, true);
-    // var info = {"sddentity":sceneID,"layerindex":0,"oid":objid,"visible":true};
-    // globe.setSceneNode(info);
+    // var info = {"docid": sceneID.toString(),"renderindex": 0,"oid": objid,"visible": 0};
+    // globe.setSceneNode(JSON.stringify(info));
+
+    $("#Attr").removeClass("control-none");
+    $("#Attr").attr("src","/attrInfo/"+objid);
+
 }
+
 
 function stopPickModelReady() {
     // alert("关闭地层查询");
     $("#FloodControl").addClass("control-none");
+    $("#Attr").addClass("control-none");
     globe.removeEventListener(EventType.LButtonDblClk, DataQuery);
     globe.stopModelDisplayAll();
 }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.css}"/>
+    <script th:src="@{/AdminLTE/bower_components/select2/vendor/jquery-2.1.0.js}"></script>
+    <script th:src="@{/AdminLTE/bower_components/bootstrap/dist/js/boostrap.js}"></script>
+    <style>
+        body {
+            color: aqua;
+        }
+    </style>
+    <script>
+        function ac() {
+            $("ul").children("li").each(function () {
+                $(this).click(function () {
+                    $("ul li").removeClass("active");
+                    $(this).addClass("active");
+                    parent.sparkModel($(this).attr("data"));
+                })
+            })
+        }
+    </script>
+</head>
+<body style="overflow-y: auto;height: 350px">
+<ul id="attrs_write" class="nav nav-pills nav-stacked" sec:authorize="hasAuthority('write-data')" style="overflow-y: auto;height: 350px">
+    <form action="/saveGeologyModel" method="post">
+        <div class="form-group">
+            <li role="presentation" hidden="true"><label for="objid" style="color: #000;" th:text="objid"></label><input id="objid" name="objid" type="text" class="form-control" th:value="${objid}"/></li>
+            <li role="presentation" th:each="field:${fields.keySet()}" th:hidden="${field}=='序号'? true:false"><label th:for="${fields.get(field)}" style="color: #000;" th:text="${field}+':'"></label><input th:id="${fields.get(field)}" th:name="${fields.get(field)}" type="text" class="form-control" th:value="${fieldWithValue.get(fields.get(field))}"/></li>
+
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </form>
+</ul>
+<ul id="attrs_read" class="nav nav-pills nav-stacked" sec:authorize="!hasAuthority('write-data')"  style="overflow-y: auto;height: 350px">
+    <li role="presentation"><a href="#">地质年代 ：</a><label class="input" value=""/></li>
+    <li role="presentation"><a href="#">地层年代：</a><label class="input" value=""/></li>
+    <li role="presentation"><a href="#">数据源：</a><label class="input" value=""/></li>
+    <li role="presentation"><a href="#">数据代码：</a><label class="input" value=""/></li>
+</ul>
+</body>
+</html>
