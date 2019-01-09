@@ -14,6 +14,12 @@ public class GeologyModelLayerServiceImpl implements GeologyModelLayerService {
     @Autowired
     private GeologyModelLayerRepository geologyModelLayerRepository;
 
+
+    @Override
+    public GeologyModelLayer getGeologyModel(Integer objid) {
+        return geologyModelLayerRepository.findByObjid(objid);
+    }
+
     @Override
     public List<?> listAll() {
         return geologyModelLayerRepository.findAll();
@@ -32,10 +38,5 @@ public class GeologyModelLayerServiceImpl implements GeologyModelLayerService {
     @Override
     public void delete(Integer id) {
         geologyModelLayerRepository.delete(id);
-    }
-
-    @Override
-    public GeologyModelLayer getGeologyModelLayer(Integer objid) {
-        return geologyModelLayerRepository.findByObjid(objid);
     }
 }

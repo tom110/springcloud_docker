@@ -65,10 +65,11 @@
     <script th:src="@{AdminLTE/dist/js/demo.js}"></script>
     <script th:src="@{AdminLTE/dist/js/my.js}"></script>
     <style type="text/css">
-        .control-block{
+        .control-block {
             display: block;
         }
-        .control-none{
+
+        .control-none {
             display: none;
         }
     </style>
@@ -80,7 +81,7 @@
     <header class="main-header">
 
         <!-- Logo -->
-        <a href="index2.html" class="logo">
+        <a href="" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>安</b>全</span>
             <!-- logo for regular state and mobile devices -->
@@ -97,38 +98,37 @@
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     <!-- Messages: style can be found in dropdown.less-->
-                    <li class="messages-menu">
+                    <li class="messages-menu" title="属性查询">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="findAttr()">
                             <i id="findAttrIcon" class="fa fa-toggle-off"></i>
                         </a>
                     </li>
                     <!-- Messages: style can be found in dropdown.less-->
-                    <li class="messages-menu">
+                    <li class="messages-menu" title="爆炸显示">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="BoomAnalysis()">
                             <i class="fa  fa-list"></i>
                         </a>
                     </li>
                     <!-- Messages: style can be found in dropdown.less-->
-                    <li class="messages-menu">
+                    <li class="messages-menu" title="距离测量">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="measureLength()">
                             <i class="fa  fa-arrows-h"></i>
                         </a>
                     </li>
                     <!-- Notifications: style can be found in dropdown.less -->
-                    <li class="notifications-menu">
+                    <li class="notifications-menu" title="面积测量">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="measureArea()">
                             <i class="fa fa-connectdevelop"></i>
                         </a>
                     </li>
                     <!-- Notifications: style can be found in dropdown.less -->
-                    <li class="notifications-menu">
+                    <li class="notifications-menu" title="测量停止">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="stopMeasure()">
                             <i class="fa fa-stop"></i>
                         </a>
                     </li>
-                    <!-- Tasks: style can be found in dropdown.less -->
-                    <li class="tasks-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <li class="tasks-menu" title="登出">
+                        <a href="/logout" class="dropdown-toggle" data-toggle="dropdown">
                             <i class="fa  fa-sign-out"></i>
                         </a>
                     </li>
@@ -152,16 +152,16 @@
                 </div>
             </div>
             <!-- search form -->
-            <form action="#" method="get" class="sidebar-form">
-                <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="Search..."/>
-                    <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat">
-                  <i class="fa fa-search"></i>
-                </button>
-              </span>
-                </div>
-            </form>
+            <!--<form action="#" method="get" class="sidebar-form">-->
+                <!--<div class="input-group">-->
+                    <!--<input type="text" name="q" class="form-control" placeholder="Search..."/>-->
+                    <!--<span class="input-group-btn">-->
+                <!--<button type="submit" name="search" id="search-btn" class="btn btn-flat">-->
+                  <!--<i class="fa fa-search"></i>-->
+                <!--</button>-->
+              <!--</span>-->
+                <!--</div>-->
+            <!--</form>-->
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
@@ -170,79 +170,103 @@
 
                 <li class="treeview">
                     <a href="#">
-                        <i class="fa fa-cube"></i> <span>加载操作</span>
+                        <i class="fa  fa-bars"></i> <span>地理信息专题</span>
                         <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li onclick="addMapKuai()"><a href="#"><i class="fa fa-flag"></i>地层块体加载</a></li>
-                        <li onclick="removeMap()"><a href="#"><i class="fa fa-flag"></i>地层块体移除</a></li>
-                        <!--<li onclick="addMap1()"><a href="#"><i class="fa fa-map-signs"></i>钻孔加载</a></li>-->
-                        <!--<li onclick="addMap2()"><a href="#"><i class="fa fa-bars"></i>地层加载</a></li>-->
-                        <li onclick="addDuan()"><a href="#"><i class="fa fa-map-signs"></i>断层加载</a></li>
-                        <li onclick="removeDuan()"><a href="#"><i class="fa fa-bars"></i>断层移除</a></li>
-                        <li onclick="addDEM()"><a href="#"><i class="fa fa-circle-o"></i>地形加载</a></li>
-                        <li onclick="removeDEM()"><a href="#"><i class="fa fa-circle-o"></i>地形移除</a></li>
+                        <li onclick="manageDEM()"><a href="#"><i class="fa fa-toggle-on" id="demShow"></i>遥感影像-DEM数据</a></li>
+                        <li onclick="manageMPro()"><a href="#"><i class="fa fa-toggle-off" id="mproShow"></i>重大项目适宜区</a></li>
+                        <li onclick="manageUnSpace()"><a href="#"><i class="fa fa-toggle-off" id="unspaceShow"></i>地下10到30米适宜区</a></li>
+                        <li onclick="manageGEnv()"><a href="#"><i class="fa fa-toggle-off" id="genvShow"></i>地质环境</a></li>
                     </ul>
                 </li>
 
                 <li class="treeview">
                     <a href="#">
-                        <i class="fa fa-medium"></i> <span>地层分析</span>
+                        <i class="fa fa-cube"></i> <span>城市地质专题</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li onclick="manageKuai()"><a href="#"><i class="fa fa-toggle-off" id="kuaiShow"></i>地层块体数据</a>
+                        </li>
+                        <li onclick="manageZuan()"><a href="#"><i class="fa fa-toggle-off" id="zuanShow"></i>钻孔数据</a>
+                        </li>
+                        <li onclick="manageDuan()"><a href="#"><i class="fa fa-toggle-off" id="duanShow"></i>断层数据</a>
+                        </li>
+                        <li onclick="managePou()"><a href="#"><i class="fa fa-toggle-off" id="pouShow"></i>剖面数据</a></li>
+                    </ul>
+                </li>
+
+
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-picture-o"></i> <span>环境治理专题</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li onclick="addMonitor()"><a href="#"><i class="fa fa-cloud"></i>矿山点分布</a></li>
+                        <li onclick="addMonitor()"><a href="#"><i class="fa fa-cloud"></i>属性查询</a></li>
+
+
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-picture-o"></i> <span>矿山治理现状</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li onclick="manageObp()"><a href="#"><i class="fa fa-toggle-off" id="obpShow"></i>倾斜摄影矿山模型</a></li>
+                                <li><a href="/globleImages" target="_blank"><i class="fa  fa-camera"></i>四维全景</a></li>
+                                <li onclick="addSmallDem()"><a href="#"><i class="fa fa-dropbox"></i>四维矿山模型</a></li>
+                                <li><a href="http://192.168.50.254:12222/kuangshan/kuangshan-Truview/SiteMap.htm"
+                                       target="_blank"><i class="fa fa-cloud"></i>矿山点云</a></li>
+                            </ul>
+                        </li>
+
+
+                        <li onclick="stopkuang()"><a href="#"><i class="fa fa-square"></i>结束</a></li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-picture-o"></i> <span>地质灾害专题</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li onclick="manageGDis()"><a href="#"><i class="fa fa-toggle-off" id="gdisShow"></i>灾害点分布</a></li>
+                        <li onclick="manageMineral()"><a href="#"><i class="fa fa-toggle-off" id="mineralShow"></i>矿产资源分布</a></li>
+                        <li onclick="manageGroundwater()"><a href="#"><i class="fa fa-toggle-off" id="groundwaterShow"></i>地下水监测分布</a></li>
+                        <li onclick="manageGeothermal()"><a href="#"><i class="fa fa-toggle-off" id="geothermalShow"></i>地热监测分布</a></li>
+                        <li onclick="manageMarinearching()"><a href="#"><i class="fa fa-toggle-off" id="marinearchingShow"></i>海洋牧场分布</a></li>
+                    </ul>
+                </li>
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-industry"></i> <span>三维分析</span>
                         <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
                     </a>
                     <ul class="treeview-menu">
-                        <!--<li onclick="BoomAnalysis()"><a href="#"><i class="fa fa-list"></i>爆炸显示</a></li>-->
                         <li onclick="showABSurface()"><a href="#"><i class="fa fa-contao"></i>地层切割</a></li>
                         <li onclick="showPipeSurface()"><a href="#"><i class="fa fa-openid"></i>隧道切割</a></li>
+                        <li onclick="showXYZSurface()"><a href="#"><i class="fa fa-openid"></i>XYZ切割</a></li>
                         <li onclick="stopCuttingAnaysis()"><a href="#"><i class="fa  fa-square"></i>结束分析</a></li>
-                    </ul>
-                </li>
-
-
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-industry"></i> <span>地形分析</span>
-                        <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-                    </a>
-                    <ul class="treeview-menu">
                         <li onclick="flood1()"><a href="#"><i class="fa fa-opencart"></i>洪水淹没分析</a></li>
                         <li onclick="cutfillanalysis1()"><a href="#"><i class="fa fa-eraser"></i>挖填方分析</a></li>
                         <li onclick="terSectAnalysis()"><a href="#"><i class="fa fa-ticket"></i>地形剖切分析</a></li>
                         <li onclick="stopAnalysis()"><a href="#"><i class="fa fa-square"></i>结束分析</a></li>
-                    </ul>
-                </li>
-
-                <!--<li class="treeview">-->
-                    <!--<a href="#">-->
-                        <!--<i class="fa fa-map-o"></i> <span>模型模拟</span>-->
-                        <!--<span class="pull-right-container">-->
-              <!--<i class="fa fa-angle-left pull-right"></i>-->
-            <!--</span>-->
-                    <!--</a>-->
-                    <!--<ul class="treeview-menu">-->
-                        <!--<li onclick="GetGemoPnt()"><a href="#"><i class="fa fa-tree"></i>模型模拟</a></li>-->
-                        <!--<li onclick="removeAllGraphic()"><a href="#"><i class="fa fa-square"></i>结束模型模拟</a></li>-->
-                    <!--</ul>-->
-                <!--</li>-->
-
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-dashboard"></i> <span>全景查询</span>
-                        <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <!--<li onclick="PickModelReady()"><a href="#"><i class="fa fa-circle-o"></i>开始查询</a></li>-->
-                        <!--<li onclick="stopPickModelReady()"><a href="#"><i class="fa fa-circle-o"></i>结束查询</a></li>-->
-                        <li onclick="PickModel()"><a href="/globleImages" target="_blank"><i class="fa fa-plus-square"></i>全景模型查询开启</a></li>
-                        <li onclick="stopPickModel_M()"><a href="#"><i class="fa fa-plus-square-o"></i>全景模型查询关闭</a></li>
                     </ul>
                 </li>
 
@@ -466,8 +490,10 @@
 
 </div>
 <iframe id="FloodControl" src="/flood" frameborder="0" allowtransparency="true" scrolling="no" class="control-none"
-    style="position: absolute;top: 50px;left: 280px;width: auto;height: auto;z-index: 9999;background-color: rgb(51,64,79)"></iframe>
+        style="position: absolute;top: 50px;left: 280px;width: auto;height: auto;z-index: 9999;background-color: rgb(51,64,79)"></iframe>
 <iframe id="Attr" src="" frameborder="0" allowtransparency="true" scrolling="no" class="control-none"
         style="position: absolute;top: 250px;left: 280px;width: auto;height: 350px;z-index: 9999;background-color: rgb(51,64,79)"></iframe>
+<iframe id="Legend" src="" frameborder="0" allowtransparency="true" scrolling="no" class="control-none"
+        style="position: absolute;top: 50px;left: 980px;width: auto;height: 550px;z-index: 9999;background-color: rgb(51,64,79)"></iframe>
 </body>
 </html>

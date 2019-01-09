@@ -14,6 +14,8 @@ services:
           reservations:
             cpus: "0.2"
             memory: 450M
+      volumes:
+        - "/etc/localtime:/etc/localtime"
       ports:
         - "6379:6379"
       hostname: "redis"
@@ -33,6 +35,8 @@ services:
         reservations:
           cpus: "0.2"
           memory: 450M
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
@@ -47,6 +51,9 @@ services:
 
   registry:
     image: repo:5006/registry
+    depends_on:
+      - redis
+      - rabbitmq
     deploy:
       placement:
         constraints: [node.role == worker]
@@ -58,6 +65,8 @@ services:
         reservations:
           cpus: "0.2"
           memory: 450M
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "8761:8761"
     hostname: "registry"
@@ -79,6 +88,8 @@ services:
         reservations:
           cpus: "0.2"
           memory: 450M
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "8888:8888"
     hostname: "config"
@@ -101,6 +112,8 @@ services:
         reservations:
           cpus: "0.2"
           memory: 450M
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "8040:8040"
       - "8041:8041"
@@ -122,6 +135,8 @@ services:
         reservations:
           cpus: "0.2"
           memory: 450M
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "9411:9411"
     hostname: "zipkin"
@@ -130,13 +145,14 @@ services:
 
   auth-service:
     depends_on:
-      - registry
       - config
     image: repo:5006/auth-service
     deploy:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "5000:5000"
     hostname: "auth-service"
@@ -145,13 +161,14 @@ services:
 
   auth-client-mgr:
     depends_on:
-      - registry
       - config
     image: repo:5006/auth-client-mgr
     deploy:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "8083:8083"
     hostname: "auth-client-mgr"
@@ -160,13 +177,14 @@ services:
 
   auth-client-server:
     depends_on:
-      - registry
       - config
     image: repo:5006/auth-client-server
     deploy:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "5003:5003"
     hostname: "auth-client-server"
@@ -175,13 +193,14 @@ services:
 
   auth-rest-service:
     depends_on:
-      - registry
       - config
     image: repo:5006/auth-rest-service
     deploy:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "8084:8084"
     hostname: "auth-rest-service"
@@ -190,15 +209,16 @@ services:
 
   cas-server:
     depends_on:
-      - registry
       - config
     image: repo:5006/cas-server
     deploy:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
-      - "8081:8081"
+      - "8081:8080"
     hostname: "cas-server"
     networks:
       - webnet
@@ -216,6 +236,8 @@ services:
         reservations:
           cpus: "0.2"
           memory: 450M
+    volumes:
+      - "/etc/localtime:/etc/localtime"
     ports:
       - "8060:8060"
     hostname: "gateway"

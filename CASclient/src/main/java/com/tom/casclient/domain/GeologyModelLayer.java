@@ -63,68 +63,68 @@ public class GeologyModelLayer extends GeologyModel {
     private String tuanjiaodu;
 
     //描述类的字段
-    public static enum Cp{
-        id("序号","id"),
-        mp_area("mp_area","mp_area"),
-        mp_perimeter("mp_perimeter","mp_perimeter"),
-        objid("模型id","objid"),
-        regcolor("REG填充颜色","regcolor"),
-        cengxu("层序","cengxu"),
-        yancengleixing("岩层类型","yancengleixing"),
-        daihao("代号","daihao"),
-        dai("代","dai"),
-        ji("纪","ji"),
-        shi("世","shi"),
-        qi("期","qi"),
-        jiduan("阶段","jieduan"),
-        xulie("序列","xulie"),
-        yachaodanyuan("亚超单元","yachaodanyuan"),
-        danyuan("单元","danyuan"),
-        xi("系","xi"),
-        tong("统","tong"),
-        qun("群","qun"),
-        zu("组","zu"),
-        duan("段","duan"),
-        dicengmiaoshu("地层描述","dicengmiaoshu"),
-        mplayer("mplayer","mplayer"),
-        tianchongyanse("填充颜色","tianchongyanse"),
-        tianchongtuan("填充图案","tianchongtuan"),
-        tuanyanse("图案颜色","tuanyanse"),
-        tuandaxiao("图案大小","tuandaxiao"),
-        tuanjiaodu("图案角度","tuanjiaodu");
-        private String name;
-        private String index;
-        private Cp(String name,String index){
-            this.name=name;
-            this.index=index;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getIndex() {
-            return index;
-        }
-
-        public void setIndex(String index) {
-            this.index = index;
-        }
-
-        public static String getName(String index){
-            for(Cp cp:Cp.values()){
-                if(cp.getIndex().equals(index)){
-                    return cp.getName();
-                }
-            }
-            return null;
-        }
-
-    }
+//    public static enum Cp{
+//        id("序号","id"),
+//        mp_area("mp_area","mp_area"),
+//        mp_perimeter("mp_perimeter","mp_perimeter"),
+//        objid("模型id","objid"),
+//        regcolor("REG填充颜色","regcolor"),
+//        cengxu("层序","cengxu"),
+//        yancengleixing("岩层类型","yancengleixing"),
+//        daihao("代号","daihao"),
+//        dai("代","dai"),
+//        ji("纪","ji"),
+//        shi("世","shi"),
+//        qi("期","qi"),
+//        jiduan("阶段","jieduan"),
+//        xulie("序列","xulie"),
+//        yachaodanyuan("亚超单元","yachaodanyuan"),
+//        danyuan("单元","danyuan"),
+//        xi("系","xi"),
+//        tong("统","tong"),
+//        qun("群","qun"),
+//        zu("组","zu"),
+//        duan("段","duan"),
+//        dicengmiaoshu("地层描述","dicengmiaoshu"),
+//        mplayer("mplayer","mplayer"),
+//        tianchongyanse("填充颜色","tianchongyanse"),
+//        tianchongtuan("填充图案","tianchongtuan"),
+//        tuanyanse("图案颜色","tuanyanse"),
+//        tuandaxiao("图案大小","tuandaxiao"),
+//        tuanjiaodu("图案角度","tuanjiaodu");
+//        private String name;
+//        private String index;
+//        private Cp(String name,String index){
+//            this.name=name;
+//            this.index=index;
+//        }
+//
+//        public String getName() {
+//            return name;
+//        }
+//
+//        public void setName(String name) {
+//            this.name = name;
+//        }
+//
+//        public String getIndex() {
+//            return index;
+//        }
+//
+//        public void setIndex(String index) {
+//            this.index = index;
+//        }
+//
+//        public static String getName(String index){
+//            for(Cp cp:Cp.values()){
+//                if(cp.getIndex().equals(index)){
+//                    return cp.getName();
+//                }
+//            }
+//            return null;
+//        }
+//
+//    }
 
     public Integer getId() {
         return id;

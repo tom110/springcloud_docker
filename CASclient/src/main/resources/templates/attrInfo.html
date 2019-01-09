@@ -10,7 +10,7 @@
     <script th:src="@{/AdminLTE/bower_components/bootstrap/dist/js/boostrap.js}"></script>
     <style>
         body {
-            color: aqua;
+            background-color: rgb(44,59,65);
         }
     </style>
     <script>
@@ -26,21 +26,40 @@
     </script>
 </head>
 <body style="overflow-y: auto;height: 350px">
-<ul id="attrs_write" class="nav nav-pills nav-stacked" sec:authorize="hasAuthority('write-data')" style="overflow-y: auto;height: 350px">
-    <form action="/saveGeologyModel" method="post">
+<ul id="attrs_write" class="nav nav-pills nav-stacked" sec:authorize="hasAuthority('write-data')" style="overflow: auto;height: 350px">
+    <form th:action="${'/'+modelFlag}" method="post">
         <div class="form-group">
-            <li role="presentation" hidden="true"><label for="objid" style="color: #000;" th:text="objid"></label><input id="objid" name="objid" type="text" class="form-control" th:value="${objid}"/></li>
-            <li role="presentation" th:each="field:${fields.keySet()}" th:hidden="${field}=='序号'? true:false"><label th:for="${fields.get(field)}" style="color: #000;" th:text="${field}+':'"></label><input th:id="${fields.get(field)}" th:name="${fields.get(field)}" type="text" class="form-control" th:value="${fieldWithValue.get(fields.get(field))}"/></li>
 
-            <button type="submit" class="btn btn-default">Submit</button>
+            <li role="presentation" hidden="true"><label for="objid" style="color: #000;" th:text="objid"></label><input id="objid" name="objid" type="text" class="form-control" th:value="${objid}"/></li>
+
+            <!--<li role="presentation" th:each="field:${fields.keySet()}" th:with="i=0" th:hidden="${field}=='序号'? true:false">-->
+                <!--<label th:for="${fields.get(field)}" style="color: #000;" th:text="${field+':'+ i}"></label>-->
+                <!--<input th:id="${fields.get(field)}" th:name="${fields.get(field)}" type="text" class="form-control" th:value="${fieldWithValue.get(fields.get(field))}"/>-->
+            <!--</li>-->
+            <li role="presentation" th:each="i : ${#numbers.sequence( 1, cpCount)}" th:hidden="${geologyBisectLayer.get(i)}=='序号'? true:false">
+                <label th:for="${fields.get(geologyBisectLayer.get(i))}" style="color: #000;" th:text="${geologyBisectLayer.get(i)+':'}"></label>
+                <input th:id="${fields.get(geologyBisectLayer.get(i))}" th:name="${fields.get(geologyBisectLayer.get(i))}" type="text" class="form-control" th:value="${fieldWithValue.get(fields.get(geologyBisectLayer.get(i)))}"/>
+            </li>
+
+            <button type="submit" class="btn btn-default">提交</button>
         </div>
     </form>
 </ul>
-<ul id="attrs_read" class="nav nav-pills nav-stacked" sec:authorize="!hasAuthority('write-data')"  style="overflow-y: auto;height: 350px">
-    <li role="presentation"><a href="#">地质年代 ：</a><label class="input" value=""/></li>
-    <li role="presentation"><a href="#">地层年代：</a><label class="input" value=""/></li>
-    <li role="presentation"><a href="#">数据源：</a><label class="input" value=""/></li>
-    <li role="presentation"><a href="#">数据代码：</a><label class="input" value=""/></li>
-</ul>
+<!--<ul id="attrs_read" class="nav nav-pills nav-stacked" sec:authorize="!hasAuthority('write-data')"  style="overflow-y: auto;height: 350px">-->
+    <!--<li role="presentation" th:each="i : ${#numbers.sequence( 1, cpCount)}" th:hidden="${geologyBisectLayer.get(i)}=='序号'? true:false" th:style="|display:${geologyBisectLayerStatus.get(i)==0 ? 'none':'block'}|">-->
+        <!--<blockquote style="height: 50px">-->
+        <!--<p th:for="${fields.get(geologyBisectLayer.get(i))}" style="color: #b8c7ce;" th:text="${geologyBisectLayer.get(i)+':'}"></p>-->
+        <!--<footer th:id="${fields.get(geologyBisectLayer.get(i))}" th:text="${fieldWithValue.get(fields.get(geologyBisectLayer.get(i)))}" style="color: #fef1ec"/>-->
+        <!--</blockquote>-->
+    <!--</li>-->
+<!--</ul>-->
+<ul style="overflow-y: auto;height: 350px;margin-left: -40px;">
+<table class="table table-striped" sec:authorize="!hasAuthority('write-data')" style="margin: 0px">
+    <tr th:each="i : ${#numbers.sequence( 1, cpCount)}" th:hidden="${geologyBisectLayer.get(i)}=='序号'? true:false" th:style="|display:${geologyBisectLayerStatus.get(i)==0 ? 'none':'block'}|">
+        <td th:for="${fields.get(geologyBisectLayer.get(i))}" style="color: #b8c7ce;background-color: #0b3e6f" th:text="${geologyBisectLayer.get(i)+':'}"></td>
+        <td th:id="${fields.get(geologyBisectLayer.get(i))}" th:text="${fieldWithValue.get(fields.get(geologyBisectLayer.get(i)))}" style="color: #ca195a"></td>
+    </tr>
+</table>
+</ul>>
 </body>
 </html>

@@ -19,26 +19,18 @@
         $( function() {
             $( "#alphaValue" ).slider({
                 change: function( event, ui ) {
-                    alphaValue=ui.value*10-300;
-                    parent.createpipeByDepthHeight(alphaValue,beltaValue);
-                }
-            });
-            $( "#beltaValue" ).slider({
-                change: function( event, ui ) {
-                    beltaValue=ui.value*20;
-                    parent.createpipeByDepthHeight(alphaValue,beltaValue);
+                    alphaValue=ui.value*10-500;
+                    parent.XYZSurface(alphaValue);
                 }
             });
         } );
     </script>
 </head>
 <body>
-<p>高度:</p>
+<p>高度值:</p>
 <div id="alphaValue"></div>
-<p>半径:</p>
-<div id="beltaValue"></div>
-<input type="button" value="切割地层" onclick="parent.createpipeexeCut(alphaValue,beltaValue)" />
-<input type="button" value="切割体1" onclick="parent.showPipeFrist()" />
-<input type="button" value="切割体2" onclick="parent.showPipeSecond()" />
+<input type="button" value="切割地层" onclick="parent.createXYZCut(alphaValue)" />
+<input type="button" value="切割体1" onclick="parent.showFirst()" />
+<input type="button" value="切割体2" onclick="parent.showSecond()" />
 </body>
 </html>

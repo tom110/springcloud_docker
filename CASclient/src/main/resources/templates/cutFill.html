@@ -1,82 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>洪水淹没</title>
     <meta charset="utf-8" />
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" th:href="@{AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css}"/>
+    <!-- jQuery 3 -->
+    <script th:src="@{AdminLTE/bower_components/jquery/dist/jquery.min.js}"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script th:src="@{AdminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
     <style>
         body {
-            color: aqua;
+            background-color: rgb(44,59,65);
+            color:#b8c7ce;
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-<div id="analyFlood">
+<!--<div id="analyFlood">-->
     <!--<div class="">-->
-    <!--<div class="" style="">淹没分析参数设置</div>-->
-    <!--<table class="">-->
-    <!--<tr class="">-->
-    <!--<td style="width:90px;">淹没颜色</td>-->
-    <!--<td>-->
-    <!--<input id="viewColorFlood" class="" value="0x0000ff" />-->
-    <!--</td>-->
-    <!--</tr>-->
-    <!--<tr class="">-->
-    <!--<td>透明度</td>-->
-    <!--<td>-->
-    <!--<input id="alphaSpinnerFlood" type="text" class="" />-->
-    <!--</td>-->
-    <!--</tr>-->
-    <!--<tr class="analysis-tr">-->
-    <!--<td>扩大区域(倍)</td>-->
-    <!--<td>-->
-    <!--<input id="expanSpinnerFlood" type="text" class="" />-->
-    <!--</td>-->
-    <!--</tr>-->
-    <!--<tr class="analysis-tr">-->
-    <!--<td>淹没高度(米)</td>-->
-    <!--<td>-->
-    <!--<input id="highSpinnerFlood" type="text" class="" />-->
-    <!--</td>-->
-    <!--</tr>-->
-    <!--</table>-->
+        <!--<div class="" style="">填挖方分析参数设置</div>-->
+        <!--<table class="">-->
+            <!--<tr class="">-->
+                <!--<td style="">填区域颜色</td>-->
+                <!--<td>-->
+                    <!--<input id="fillColorCut" class="" value="0x0fb9ff" />-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--<tr class="">-->
+                <!--<td>挖区域颜色</td>-->
+                <!--<td>-->
+                    <!--<input id="cutColorCut" type="text" class="" value="0x00ff00" />-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--<tr class="analysis-tr">-->
+                <!--<td>无填挖区域颜色</td>-->
+                <!--<td>-->
+                    <!--<input id="noneColorCut" type="text" class="" value="0x3aeeb3" />-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--<tr class="analysis-tr">-->
+                <!--<td>平整高度(米)</td>-->
+                <!--<td>-->
+                    <!--<input id="highTxtCut" type="text" class="" value="0" />-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--<tr class="analysis-tr">-->
+                <!--<td></td>-->
+                <!--<td>-->
+                    <!--<input id="fillCut" onclick="parent.fillCut()" type="button" class="" value="框选分析区域" />-->
+                <!--</td>-->
+            <!--</tr>-->
+        <!--</table>-->
     <!--</div>-->
-    <!--<hr />-->
-    <div class="">
-        <div class="" style="">填挖方分析参数设置</div>
-        <table class="">
-            <tr class="">
-                <td style="">填区域颜色</td>
-                <td>
-                    <input id="fillColorCut" class="" value="0x0fb9ff" />
-                </td>
-            </tr>
-            <tr class="">
-                <td>挖区域颜色</td>
-                <td>
-                    <input id="cutColorCut" type="text" class="" value="0x00ff00" />
-                </td>
-            </tr>
-            <tr class="analysis-tr">
-                <td>无填挖区域颜色</td>
-                <td>
-                    <input id="noneColorCut" type="text" class="" value="0x3aeeb3" />
-                </td>
-            </tr>
-            <tr class="analysis-tr">
-                <td>平整高度(米)</td>
-                <td>
-                    <input id="highTxtCut" type="text" class="" value="0" />
-                </td>
-            </tr>
-            <tr class="analysis-tr">
-                <td></td>
-                <td>
-                    <input id="fillCut" onclick="parent.fillCut()" type="button" class="" value="框选分析区域" />
-                </td>
-            </tr>
-        </table>
+<!--</div>-->
+<form>
+    <div class="form-group">
+        <label for="highTxtCut" style="font-size: 18px">挖方分析高度参数设置（米）</label>
+        <input class="form-control" id="highTxtCut" value="100" type="number"/>
     </div>
-</div>
+    <button type="button" style="display:block;margin:0 auto" onclick="parent.fillCut()" class="btn btn-default">拖动鼠标拉取分析区域</button>
+</form>
 </body>
 </html>

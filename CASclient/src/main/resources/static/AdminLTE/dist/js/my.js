@@ -1,25 +1,65 @@
 var globe = new Globe();
+var smallDemName00 = "dem00_54mif";
+var smallDemName01 = "dem01_54mif";
+var smallDemName02 = "dem02_54mif";
+var smallDemName03 = "dem03_54mif";
+var demName = "dem";
 var docName = "地图文档";
+var duanCengName = "断层";
+var poName = "剖面完整版";
+var zuanName = "钻孔";
+var mproName = "重大工程适宜性分区图";
+var unspaceName = "地下空间10到30";
+var genvName = "地质环境";
+var obpName = "矿山修复模型";
+// var gdisName="地质灾害";
+var gdisName = "地灾点";
+var mineralName="矿产资源";
+var marineranchingName="海洋牧场";
+var groundwaterName="地下水监测";
+var geothermalName="地热监测";
+var dem00Name = "dem00";
+var dem01Name = "dem01";
+var dem02Name = "dem02";
+var dem03Name = "dem03";
 var QueryURL = "gdbp://MapGisLocal/Test1/sfcls/land_models";
-var duanceng="gdbp://MapGisLocal/model_new/sfcls/entity_2952";
-// var QueryURL = "GDBP://MapGisLocal/示例数据/ds/三维示例/sfcls/景观_建筑模型";
-var IP = "172.20.226.65";
+var kuai = "gdbp://MapGisLocal/Test1/sfcls/land_models";
+var duanceng = "gdbp://MapGisLocal/duanceng/sfcls/duancheng";
+var po = "gdbp://MapGisLocal/duanceng/sfcls/pomian_modified";
+var zuan = "gdbp://MapGisLocal/duanceng/sfcls/entity_133";
+var dem00 = "gdbp://MapGisLocal/sample/ras/dem00_54mif";
+var dem01 = "gdbp://MapGisLocal/sample/ras/dem01_54mif";
+var dem02 = "gdbp://MapGisLocal/sample/ras/dem02_54mif";
+var dem03 = "gdbp://MapGisLocal/sample/ras/dem03_54mif";
+// var gdis="gdbp://MapGisLocal/地质灾害/sfcls/地质灾害";
+var gdis = "gdbp://MapGisLocal/地质灾害/sfcls/灾害点";
+var genv = "gdbp://MapGisLocal/sample/sfcls/地质环境3";
+var mpro = "gdbp://MapGisLocal/sample/sfcls/工程建设面";
+var unspace = "gdbp://MapGisLocal/sample/sfcls/地下空间10-30M3";
+
+var earthDisaster = "gdbp://MapGisLocal/地质灾害/sfcls/灾害点";
+var mineral = "gdbp://MapGisLocal/地质灾害/sfcls/矿产资源";
+var marineRanching = "gdbp://MapGisLocal/地质灾害/sfcls/海洋牧场";
+var groundWater = "gdbp://MapGisLocal/地质灾害/sfcls/地下水监测点";
+var geoThermal = "gdbp://MapGisLocal/地质灾害/sfcls/地热监测点";
+
+var IP = "192.168.0.6";
 var port = "6163";
+var modelFlag = "kuai";
 var sceneID;
-var DEMID;
-var DUANCENGID;
+var DEMID,POID,DUANCENGID, MPROID, UNSPACEID, GENVID, OBPID, GDISID,MINERALID,MARINERACHINGID,GROUNDWATERID,GEOTHERMALID;
 var map;
 var helpGeometry;
 var range3Dstr = "";
 var globe = new Globe();
-var zkmodelId, mxmodelId,commodelId, labelId1, labelId2;
-var openflag = false, cutflag = true, floodflag = true, addModelFlag = true, pipeFlag = true,findAttrFlag=true;
+var zkmodelId, mxmodelId, commodelId, labelId1, labelId2, labelId3;
+var openflag = false, cutflag = true, floodflag = true, addModelFlag = true, pipeFlag = true, findAttrFlag = true;
 var mapId_img = 0;
 var mapId_cia = 0;
 var floodCount = 0;
 var floodInfo = new FLoodAnalyzeInfo();
 var flood_content, flood_colorFloodValue, flood_alphaSpinnerValue, flood_expanSpinnerValue, flood_highSpinnerValue;
-var boomFlag=true;
+var boomFlag = true;
 var first, second;
 var pipeFirst, pipeSecond;
 var pnts = "";
@@ -27,6 +67,21 @@ var shapeType;
 var COUNT, X1, X2, Y1, Y2;
 var jsonpnts = {"PntArray": []};
 var dotarr = [];
+var kuaiShowFlag = false;
+var zuanShowFlag = false;
+var duanShowFlag = false;
+var pouShowFlag = false;
+var demShowFlag = true;
+var mproShowFlag = false;
+var unspaceShowFlag = false;
+var genvShowFlag = false;
+var obpShowFlag = false;
+var gdisShowFlag = false;
+var mineralShowFlag=false;
+var marinearchingShowFlag=false;
+var groundwaterShowFlag=false;
+var geothermalShowFlag=false;
+
 
 //地球载入初始化
 function init() {
@@ -44,7 +99,7 @@ function init() {
     }
 
     var strObj = new Bubble();
-    strObj.text = "胶东山区";       //标注文本
+    strObj.text = "威海城市综合";       //标注文本
     strObj.x = 122.177;                   //标注点X
     strObj.y = 37.33;                    //标注点Y
     strObj.z = 0;                       //标注点Z
@@ -60,7 +115,7 @@ function init() {
     labelId1 = globe.addBubble(strObj);
 
     var strObj1 = new Bubble();
-    strObj1.text = "泰安山区";       //标注文本
+    strObj1.text = "泰安城市综合";       //标注文本
     strObj1.x = 117.182;                   //标注点X
     strObj1.y = 36.323;                   //标注点Y
     strObj1.z = 0;                       //标注点Z
@@ -92,6 +147,8 @@ function init() {
     // setTimeout("jump()",8000);
 
     //globe.goToSurfaceMode();
+
+    // addMap();
 }
 
 //地球视图跳转
@@ -103,12 +160,115 @@ function pickModels() {
     addMap();
 }
 
-//********加载模型和地层******start
+
+//****************************************************************************矿山治理******start
+function addBubble() {
+    globe.load();
+
+    var strObjx = new Bubble();
+    strObjx.text = "矿山治理点";       //标注文本
+    strObjx.x = 416828.66;                   //标注点X
+    strObjx.y = 4153054.50;                   //标注点Y
+    strObjx.z = 31.58;                       //标注点Z
+    strObjx.fontcolor = 0xFFFFFFFF;      //字体颜色
+    strObjx.fontsize = 20;
+    strObjx.bgColor = 0xffCDAD00;        //标注区域的背景颜色
+    strObjx.opacity = 1.0;               //气泡标注透明度
+    strObjx.width = 30;                  //气泡标注的宽
+    strObjx.height = 25;                 //气泡标注的高
+    strObjx.attribute = this.text;
+
+    //调用addBubble方法添加气泡标注
+    labelId3 = globe.addBubble(strObjx);
+    globe.startPickLabel();
+}
+
+function addSmallDem() {
+    $("#FloodControl").removeClass("control-none");
+    $("#FloodControl").attr("src", "/dem");
+    globe.load();
+
+    globe.removeAll();
+    // globe.goToGlobeMode();
+    sceneID = globe.addDoc(dem00Name, IP, "6163", DocType.TypeG3D);
+    globe.reset();
+}
+
+function showdem00() {
+    globe.load();
+    globe.removeAll();
+    sceneID = globe.addDoc(dem00Name, IP, "6163", DocType.TypeG3D);
+}
+
+function showdem01() {
+    globe.load();
+    globe.removeAll();
+    sceneID = globe.addDoc(dem01Name, IP, "6163", DocType.TypeG3D);
+}
+
+function showdem02() {
+    globe.load();
+    globe.removeAll();
+    sceneID = globe.addDoc(dem02Name, IP, "6163", DocType.TypeG3D);
+}
+
+function showdem03() {
+    globe.load();
+    globe.removeAll();
+    sceneID = globe.addDoc(dem03Name, IP, "6163", DocType.TypeG3D);
+}
+
+function addMonitor() {
+    globe.load();
+    var labelObj;
+    labelObj = new Label();
+    labelObj.text = "武汉";       //文本
+    labelObj.x = 416828.66;           //标注点X
+    labelObj.y = 4153054.50;     //标注点Y
+    labelObj.z = 31.58;               //标注点Z
+    labelObj.attribute = "123";
+
+    alert("ues");
+    //调用addLabel方法添加文本标注
+    var tempElement = globe.addLabel(labelObj);
+    if (tempElement == "") {
+        alert("添加标注失败！");
+    }
+
+}
+
+
+function stopkuang() {
+    $("#FloodControl").addClass("control-none");
+    globe.load();
+    globe.removeAll();
+    DEMID = globe.addDoc(demName, IP, port, DocType.TypeG3D);
+    globe.reset();
+}
+
+//****************************************************************************矿山治理******end
+
+function sparkAllModels(modelFlag) {
+    globe.load();
+    if (modelFlag == "gdis") {
+        $.post("/getModelIds", {
+            modelFlag: modelFlag
+        }, function (data) {
+            for (var i in data) {
+                var info = "LayerIndex:14,ObjID:" + i + ",SddHandle:" + GDISID;
+                globe.startModelDiplay(info, 1, false);
+            }
+        })
+    }
+}
+
+//****************************************************************************加载模型和地层******start
+
 //加载模型
 function addMap() {
     globe.load();
 
-    globe.removeEventListener(EventType.PickLabel,pickModels);
+    globe.removeEventListener(EventType.PickLabel, pickModels);
     globe.stopPickLabel();
 
     //删除上一个标注
@@ -126,22 +286,45 @@ function addMap() {
     globe.goToSurfaceMode();//进入表面模式
     // globe.setEnvLight(0x99999999);
     globe.setEnvLight(0x99999999);
-    sceneID = globe.addDoc(docName, IP, "6163", DocType.TypeG3D);
+    sceneID = globe.addDoc(demName, IP, "6163", DocType.TypeG3D);
     globe.reset();//定位到模型所在位置
     //获取被切割图层的Range3D
     range3Dstr = globe.getSceneProperty(sceneID, 0, "Range3D");//只能获取模型图层的空间范围
 }
 
+//加载地层控制
+function manageKuai() {
+    if (!kuaiShowFlag) {
+        addMapKuai();
+        $("#kuaiShow").removeClass("fa fa-toggle-off");
+        $("#kuaiShow").addClass("fa fa-toggle-on");
+        kuaiShowFlag = true;
+    } else {
+        removeMap();
+        $("#kuaiShow").removeClass("fa fa-toggle-on");
+        $("#kuaiShow").addClass("fa fa-toggle-off");
+        kuaiShowFlag = false;
+    }
+}
+
+//加载地层
 function addMapKuai() {
-    DEMID = globe.addDoc(docName, IP, port, DocType.TypeG3D);
+    sceneID = globe.addDoc(docName, IP, port, DocType.TypeG3D);
     if (DEMID < 0) {
         alert("加载失败！");
         return;
     }
-    QueryURL="gdbp://MapGisLocal/Test1/sfcls/land_models";
+    stopPickModelReady();
+    stopPickModelReady();
+    $("#findAttrIcon").removeClass("fa  fa-toggle-on");
+    $("#findAttrIcon").addClass("fa fa-toggle-off");
+    findAttrFlag = true;
+    QueryURL = kuai;
+    modelFlag = "kuai";
 }
 
-function removeMap(){
+//移除地层
+function removeMap() {
     globe.load();
     if (sceneID > 0 || sceneID) {
         var doc = globe.getDocByName(docName);
@@ -149,113 +332,382 @@ function removeMap(){
             return false;
         return globe.removeDocById(doc.id);
     }
+    globe.removeEventListener(EventType.LButtonDblClk, DataQuery);
 }
 
-function addDuan() {
-    DUANCENGID = globe.addDoc("断层", IP, port, DocType.TypeG3D);
-    if (DUANCENGID < 0) {
+//加载地质灾害点
+function manageGDis() {
+    if (!gdisShowFlag) {
+        addGDis();
+        $("#gdisShow").removeClass("fa fa-toggle-off");
+        $("#gdisShow").addClass("fa fa-toggle-on");
+        gdisShowFlag = true;
+    } else {
+        removeGDis();
+        $("#gdisShow").removeClass("fa fa-toggle-on");
+        $("#gdisShow").addClass("fa fa-toggle-off");
+        gdisShowFlag = false;
+    }
+}
+
+//加载地质灾害点
+function addGDis() {
+    GDISID = globe.addDoc(gdisName, IP, port, DocType.TypeG3D);
+    if (GDISID < 0) {
         alert("加载失败！");
         return;
     }
-    QueryURL=duanceng;
+    stopPickModelReady();
+    $("#gdisShow").removeClass("fa  fa-toggle-on");
+    $("#gdisShow").addClass("fa fa-toggle-off");
+    findAttrFlag = true;
+    QueryURL = gdis;
+    modelFlag = "gdis";
+
+    sparkAllModels(modelFlag);
+
 }
 
-function removeDuan() {
+//移除地质灾害点
+function removeGDis() {
     globe.load();
-    if (DUANCENGID > 0 || DUANCENGID) {
-        var doc = globe.getDocByName("断层");
+    if (GDISID > 0 || GDISID) {
+        var doc = globe.getDocByName(gdisName);
         if (!doc)
             return false;
         return globe.removeDocById(doc.id);
     }
+    globe.removeEventListener(EventType.LButtonDblClk, DataQuery);
 }
 
 
+//加载断层控制
+function manageDuan() {
+    if (!duanShowFlag) {
+        addDuan();
+        $("#duanShow").removeClass("fa fa-toggle-off");
+        $("#duanShow").addClass("fa fa-toggle-on");
+        duanShowFlag = true;
+    } else {
+        removeDuan();
+        $("#duanShow").removeClass("fa fa-toggle-on");
+        $("#duanShow").addClass("fa fa-toggle-off");
+        duanShowFlag = false;
+    }
+}
+
+//加载断层
+function addDuan() {
+    DUANCENGID = globe.addDoc(duanCengName, IP, port, DocType.TypeG3D);
+    if (DUANCENGID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL = duanceng;
+    stopPickModelReady();
+    modelFlag = "duan";
+}
+
+//移除断层
+function removeDuan() {
+    globe.load();
+    if (DUANCENGID > 0 || DUANCENGID) {
+        var doc = globe.getDocByName(duanCengName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+    stopPickModelReady();
+}
+
+//加载钻孔控制
+function manageZuan() {
+    if (!zuanShowFlag) {
+        addZuan();
+        $("#zuanShow").removeClass("fa fa-toggle-off");
+        $("#zuanShow").addClass("fa fa-toggle-on");
+        zuanShowFlag = true;
+    } else {
+        removeZuan();
+        $("#zuanShow").removeClass("fa fa-toggle-on");
+        $("#zuanShow").addClass("fa fa-toggle-off");
+        zuanShowFlag = false;
+    }
+}
 
 //加载钻孔
-function addMap1() {
-    globe.load();
-    if (zkmodelId > 0 || mxmodelId > 0) {
-        globe.removeMap(zkmodelId);
-        globe.removeMap(mxmodelId);
+function addZuan() {
+    DUANCENGID = globe.addDoc(zuanName, IP, port, DocType.TypeG3D);
+    if (DUANCENGID < 0) {
+        alert("加载失败！");
+        return;
     }
-
-    if (sceneID > 0 || DEMID) {
-        removeCut();
-        globe.removeAllDoc();//清除一切模型体
-    }
-
-
-    zkmodelId = globe.appendGeomByUrl("gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/钻孔模型-ys", 0, IP, port);
-    commodelId=zkmodelId;
-    QueryURL="gdbp://MapGisLocal/钻孔自动建模-模型/sfcls/钻孔模型-ys";
-    globe.reset();
+    QueryURL = duanceng;
+    stopPickModelReady();
+    modelFlag = "zuan";
 }
 
-//加载地层模型
-function addMap2() {
+//移除钻孔
+function removeZuan() {
     globe.load();
-
-    if (zkmodelId > 0 || mxmodelId > 0) {
-        globe.removeMap(zkmodelId);
-        globe.removeMap(mxmodelId);
+    if (DUANCENGID > 0 || DUANCENGID) {
+        var doc = globe.getDocByName(zuanName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
     }
+    stopPickModelReady();
+}
 
-    if (sceneID > 0 || DEMID) {
-        removeCut();
-        globe.removeAllDoc();
+//加载剖面控制
+function managePou() {
+    if (!pouShowFlag) {
+        addPo();
+        $("#pouShow").removeClass("fa fa-toggle-off");
+        $("#pouShow").addClass("fa fa-toggle-on");
+        pouShowFlag = true;
+    } else {
+        removePo();
+        $("#pouShow").removeClass("fa fa-toggle-on");
+        $("#pouShow").addClass("fa fa-toggle-off");
+        pouShowFlag = false;
     }
-    mxmodelId = globe.appendGeomByUrl(QueryURL, 0, IP, port);
-    commodelId=mxmodelId;
-    globe.reset();
+}
+
+//加载剖面
+function addPo() {
+    POID = globe.addDoc(poName, IP, port, DocType.TypeG3D);
+    if (POID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL = po;
+    stopPickModelReady();
+    modelFlag = "po";
+}
+
+//移除剖面
+function removePo() {
+    globe.load();
+    if (POID > 0 || POID) {
+        var doc = globe.getDocByName(poName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+    stopPickModelReady();
+}
+
+
+//加载dem控制
+function manageDEM() {
+    if (!demShowFlag) {
+        addDEM();
+        $("#demShow").removeClass("fa fa-toggle-off");
+        $("#demShow").addClass("fa fa-toggle-on");
+        demShowFlag = true;
+    } else {
+        removeDEM();
+        $("#demShow").removeClass("fa fa-toggle-on");
+        $("#demShow").addClass("fa fa-toggle-off");
+        demShowFlag = false;
+    }
 }
 
 //加载DEM模型
 function addDEM() {
     globe.load();
-    // if (sceneID > 0 || sceneID) {
-    //     globe.removeAllDoc();
-    // }
-    // globe.goToSurfaceMode();
-    DEMID = globe.addDoc("dem", IP, port, DocType.TypeG3D);
+    DEMID = globe.addDoc(demName, IP, port, DocType.TypeG3D);
     if (DEMID < 0) {
         alert("加载失败！");
         return;
     }
-
-
-    // globe.reset();
 }
 
 //移除DEM模型
 function removeDEM() {
     globe.load();
     if (sceneID > 0 || sceneID) {
-        var doc = globe.getDocByName("dem");
+        var doc = globe.getDocByName(demName);
         if (!doc)
             return false;
         return globe.removeDocById(doc.id);
     }
-    // globe.goToSurfaceMode();
-
-    // if (sceneID > 0 || DEMID) {
-    //     globe.removeAllDoc();//清除一切模型体
-    // }
-    //
-    // sceneID = globe.addDoc(docName, IP, port, DocType.TypeG3D);
-    // if (DEMID < 0) {
-    //     alert("加载失败！");
-    //     return;
-    // }
-
 }
 
-//********加载模型和地层******end
+//加载重大项目适宜区
+function addMPro() {
+    globe.load();
+    $("#Legend").removeClass("control-none");
+    $("#Legend").attr("src", "/legend/mpro");
+    MPROID = globe.addDoc(mproName, IP, port, DocType.TypeG3D);
+    if (MPROID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    findAttrFlag = true;
+    QueryURL = mpro;
+    modelFlag = "mpro";
+}
+
+// 移除重大项目适宜区
+function removeMPro() {
+    globe.load();
+    $("#Legend").addClass("control-none");
+    if (MPROID > 0 || MPROID) {
+        var doc = globe.getDocByName(mproName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+    globe.removeEventListener(EventType.LButtonDblClk, DataQuery);
+}
+
+// 管理重大项目适宜区
+function manageMPro() {
+    if (!mproShowFlag) {
+        addMPro();
+        $("#mproShow").removeClass("fa fa-toggle-off");
+        $("#mproShow").addClass("fa fa-toggle-on");
+        mproShowFlag = true;
+    } else {
+        removeMPro();
+        $("#mproShow").removeClass("fa fa-toggle-on");
+        $("#mproShow").addClass("fa fa-toggle-off");
+        mproShowFlag = false;
+    }
+}
+
+//加载地下空间10到30米
+function addUnSpace() {
+    globe.load();
+    $("#Legend").removeClass("control-none");
+    $("#Legend").attr("src", "/legend/unspace");
+    UNSPACEID = globe.addDoc(unspaceName, IP, port, DocType.TypeG3D);
+    if (UNSPACEID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL = unspace;
+    stopPickModelReady();
+    modelFlag = "unspace";
+}
+
+// 移除地下空间10到30米
+function removeUnSpace() {
+    globe.load();
+    $("#Legend").addClass("control-none");
+    if (UNSPACEID > 0 || UNSPACEID) {
+        var doc = globe.getDocByName(unspaceName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+}
+
+// 管理地下空间10到30米
+function manageUnSpace() {
+    if (!unspaceShowFlag) {
+        addUnSpace();
+        $("#unspaceShow").removeClass("fa fa-toggle-off");
+        $("#unspaceShow").addClass("fa fa-toggle-on");
+        unspaceShowFlag = true;
+    } else {
+        removeUnSpace();
+        $("#unspaceShow").removeClass("fa fa-toggle-on");
+        $("#unspaceShow").addClass("fa fa-toggle-off");
+        unspaceShowFlag = false;
+    }
+}
+
+//加载地质环境
+function addGEnv() {
+    globe.load();
+    $("#Legend").removeClass("control-none");
+    $("#Legend").attr("src", "/legend/genv");
+    GENVID = globe.addDoc(genvName, IP, port, DocType.TypeG3D);
+    if (GENVID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL = genv;
+    stopPickModelReady();
+    modelFlag = "genv";
+}
+
+// 移除地质环境
+function removeGEnv() {
+    globe.load();
+    $("#Legend").addClass("control-none");
+    if (GENVID > 0 || GENVID) {
+        var doc = globe.getDocByName(genvName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+}
+
+// 管理地质环境
+function manageGEnv() {
+    if (!genvShowFlag) {
+        addGEnv();
+        $("#genvShow").removeClass("fa fa-toggle-off");
+        $("#genvShow").addClass("fa fa-toggle-on");
+        genvShowFlag = true;
+    } else {
+        removeGEnv();
+        $("#genvShow").removeClass("fa fa-toggle-on");
+        $("#genvShow").addClass("fa fa-toggle-off");
+        genvShowFlag = false;
+    }
+}
+
+//加载倾斜摄影模型
+function addObp() {
+    globe.load();
+    OBPID = globe.addDoc(obpName, IP, port, DocType.TypeG3D);
+    if (OBPID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    globe.reset();
+}
+
+// 移除倾斜摄影模型
+function removeObp() {
+    globe.load();
+    if (OBPID > 0 || OBPID) {
+        var doc = globe.getDocByName(obpName);
+        if (!doc)
+            return false;
+        // globe.removeAll();
+        return globe.removeDocById(doc.id);
+
+    }
+}
+
+// 管理倾斜摄影模型
+function manageObp() {
+    if (!obpShowFlag) {
+        addObp();
+        $("#obpShow").removeClass("fa fa-toggle-off");
+        $("#obpShow").addClass("fa fa-toggle-on");
+        obpShowFlag = true;
+    } else {
+        removeObp();
+        $("#obpShow").removeClass("fa fa-toggle-on");
+        $("#obpShow").addClass("fa fa-toggle-off");
+        obpShowFlag = false;
+    }
+}
 
 
 
 
-//**********切割面切割********start
+//***********************************************************************加载模型和地层******end
+
+
+//******************************************************************切割面切割********start
 function showABSurface() {
     $("#FloodControl").removeClass("control-none");
     $("#FloodControl").attr("src", "/cutting");
@@ -283,8 +735,8 @@ function showFirst() {
         globe.removeAllDoc();
     }
     alert(first)
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + first, 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + first;
+    commodelId = globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + first, 0, IP, port);
+    QueryURL = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + first;
     globe.reset();
 }
 
@@ -301,8 +753,8 @@ function showSecond() {
         globe.removeAllDoc();
     }
     alert(second);
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + second, 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + second;
+    commodelId = globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + second, 0, IP, port);
+    QueryURL = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + second;
     globe.reset();
 
 }
@@ -338,20 +790,15 @@ function stopCuttingAnaysis() {
     globe.removeEventListener(EventType.RButtonDown, createpipe);
 }
 
-//**********切割面切割********end
+//***********************************************************************切割面切割********end
 
-
-
-
-
-
-//***********隧道钻孔切割**********start
+//*******************************************************************隧道钻孔切割**********start
 function showPipeSurface() {
     $("#FloodControl").removeClass("control-none");
     $("#FloodControl").attr("src", "/pipe");
 
     globe.addEventListener(EventType.LButtonDblClk, AddPipePnt);
-    globe.addEventListener(EventType.RButtonDown, createpipe);
+    // globe.addEventListener(EventType.RButtonDown, createpipe);
 
     removeCut();
     dotarr = [];
@@ -428,24 +875,26 @@ function createpipeByDepthHeight(depth1, height1) {
 //隧道体切割
 function createpipeexeCut(depth1, height1) {
     var orgSFClsStr = QueryURL;
-    pipeFirst=getUuid();
+    pipeFirst = getUuid();
     var leftSFClsStr_k = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeFirst;
-    pipeSecond=getUuid();
+    pipeSecond = getUuid();
     var rightSFClsStr_k = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeSecond;
     // var pnts = "485710.625,4280000;486705.75,4282905;486678.125,4286303.5;487085.21875,4289067;486678.125,4286303.5;487085.21875,4289067"; //切割路线
-    var ps="";
-    var parray=JSON.parse(pnts).pntarray;
-    for(var i=0;i<parray.length;i++){
-        ps=ps+parray[i].x+","+parray[i].y+";";
+    var ps = "";
+    var parray = JSON.parse(pnts).pntarray;
+    for (var i = 0; i < parray.length; i++) {
+        ps = ps + parray[i].x + "," + parray[i].y + ";";
     }
-    ps=ps.substring(0,ps.length-1);
+    ps = ps.substring(0, ps.length - 1);
     var type = "circle";
     var radius = height1; //半径
     var number = 36;//顶分段数
     var depth = depth1; //深度
     var length = 20; // 类型为拱形时有效，表示多边形的长
     var height = 5; //类型为拱形时有效，表示多边形的高
-    globe.exeCutByPipe(orgSFClsStr, leftSFClsStr_k, rightSFClsStr_k, ps, type, radius, number, depth, length, height, function(){alert("切割成功！")}, errorCallback, IP, 6163);
+    globe.exeCutByPipe(orgSFClsStr, leftSFClsStr_k, rightSFClsStr_k, ps, type, radius, number, depth, length, height, function () {
+        alert("切割成功！")
+    }, errorCallback, IP, 6163);
 }
 
 function showPipeFrist() {
@@ -461,8 +910,8 @@ function showPipeFrist() {
         globe.removeAllDoc();
     }
     alert(pipeFirst)
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeFirst, 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeFirst;
+    commodelId = globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeFirst, 0, IP, port);
+    QueryURL = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeFirst;
     globe.reset();
 }
 
@@ -479,19 +928,56 @@ function showPipeSecond() {
         globe.removeAllDoc();
     }
     alert(pipeSecond)
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeSecond, 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeSecond;
+    commodelId = globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeSecond, 0, IP, port);
+    QueryURL = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + pipeSecond;
     globe.reset();
 }
 
-//***********隧道钻孔切割**********end
+//**************************************************************************隧道钻孔切割**********end
+
+//*******************************************************************xyz面切割**********start
+function showXYZSurface() {
+    $("#FloodControl").removeClass("control-none");
+    $("#FloodControl").attr("src", "/xyzCutting");
+
+    globe.addEventListener(EventType.LButtonDblClk, AddPipePnt);
+    // globe.addEventListener(EventType.RButtonDown, createpipe);
+
+    removeCut();
+    dotarr = [];
+}
+
+//xyz平面切割
+function XYZSurface(z) {
+    //移除切割面
+    removeCut();
+    //三维切割辅助面
+    helpGeometry = globe.createXYZSurface(range3Dstr, "z", z);
+}
+
+function createXYZCut(z) {
+    var orgSFClsStr = QueryURL;
+    first = getUuid();
+    var leftSFClsStr = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + first;
+    second = getUuid();
+    var rightSFClsStr = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/地质模型_" + second;
+    //XYZ平面切割
+    var type = "Z";
+    var leftValue = z;
+    var rigthValue = z;
+    globe.exeCutByXYZSurface(orgSFClsStr, leftSFClsStr, rightSFClsStr, type, leftValue, rigthValue,
+        function (object) {
+            alert("切割成功");
+        },
+        function (object) {
+            alert("切割失败");
+        }, ip, port);
+}
+
+//**************************************************************************xyz面切割**********end
 
 
-
-
-
-
-//*******矩形操作************start
+//*****************************************************************************矩形操作************start
 function GetGemoPnt() {
     $("#FloodControl").removeClass("control-none");
     $("#FloodControl").attr("src", "/showModel");
@@ -515,18 +1001,18 @@ function showModel() {
     // alert("hell");
     removeAllGraphic();
     var content = document.frames['FloodControl'].document;
-    var n = parseFloat(content.getElementById('n').value) ;
-    var innerLongX=(X2-X1)/n;
-    var innerLongY=(Y2-Y1)/n;
+    var n = parseFloat(content.getElementById('n').value);
+    var innerLongX = (X2 - X1) / n;
+    var innerLongY = (Y2 - Y1) / n;
     var state = globe.setSceneState(DEMID, 4, 5);
-    for(var i=0;i<=n;i++){
-        for(var j=0;j<=n;j++){
-            createModle(X1+i*innerLongX,Y1+j*innerLongY,state);
+    for (var i = 0; i <= n; i++) {
+        for (var j = 0; j <= n; j++) {
+            createModle(X1 + i * innerLongX, Y1 + j * innerLongY, state);
         }
     }
 }
 
-function createModle(x,y,state) {
+function createModle(x, y, state) {
     // alert(globe.getTerrainEle(x, y));
     var point = x + "," + y + "," + globe.getTerrainEle(x, y);
     var info = new Draw3DElementInfo();
@@ -598,10 +1084,7 @@ function addGraphic() {
     pnts = "";
 }
 
-//*******矩形操作************end
-
-
-
+//*******************************************************************************矩形操作************end
 
 //得到uuid
 function getUuid() {
@@ -627,15 +1110,14 @@ function getUuid() {
 }
 
 
-
-//******地层爆炸********start
+//***********************************************************************************地层爆炸********start
 function BoomAnalysis() {
-    if(boomFlag){
+    if (boomFlag) {
         startBoomAnalysis();
-        boomFlag=false;
-    }else{
+        boomFlag = false;
+    } else {
         stopBoomAnalysis();
-        boomFlag=true;
+        boomFlag = true;
     }
 }
 
@@ -660,10 +1142,7 @@ function stopBoomAnalysis() {
     globe.stopAnalyzeTool(EnumCommToolType.BombShow);
 }
 
-//******地层爆炸********end
-
-
-
+//***************************************************************************************地层爆炸********end
 
 
 //显示切割模型结果
@@ -671,15 +1150,13 @@ function addcutModel() {
     if (sceneID > 0 || DEMID) {
         globe.removeAllDoc();
     }
-    commodelId= globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/b1", 0, IP, port);
-    QueryURL="gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/b1";
+    commodelId = globe.appendGeomByUrl("gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/b1", 0, IP, port);
+    QueryURL = "gdbp://MapGisLocal/IGS_OGC_EPSG_CRS/sfcls/b1";
     globe.reset();
 }
 
 
-
-
-//*********交互输入填挖方量*******start
+//********************************************************************************交互输入填挖方量*******start
 function cutfillanalysis1() {
     stopAnalysis();
 
@@ -691,9 +1168,9 @@ function cutfillanalysis1() {
 function fillCut() {
     //获取填挖方分析输入参数
     var content = document.frames['FloodControl'].document;
-    var fillColorValue = content.getElementById('fillColorCut').value;
-    var cutColorValue = content.getElementById('cutColorCut').value;
-    var noneColorValue = content.getElementById('noneColorCut').value;
+    var fillColorValue = "0x0fb9ff";
+    var cutColorValue = "0x00ff00";
+    var noneColorValue = "0x3aeeb3";
     var highTxtValue = content.getElementById('highTxtCut').value;
 
     //注册事件
@@ -734,12 +1211,10 @@ function getFillCutResult(result) {
 
 }
 
-//*********交互输入填挖方量*******end
+//*********************************************************************************交互输入填挖方量*******end
 
 
-
-
-//**********交互式分析洪水淹没******start
+//******************************************************************************交互式分析洪水淹没******start
 function flood1() {
     // stopAnalysis();
 
@@ -753,9 +1228,9 @@ function flood() {
     alert("请设置观察点");
     //获取淹没分析输入参数
     flood_content = document.frames['FloodControl'].document;
-    flood_colorFloodValue = flood_content.getElementById("viewColorFlood").value;
-    flood_alphaSpinnerValue = flood_content.getElementById("alphaSpinnerFlood").value;
-    flood_expanSpinnerValue = flood_content.getElementById("expanSpinnerFlood").value;
+    flood_colorFloodValue = "0xFF1111";
+    flood_alphaSpinnerValue = 1;
+    flood_expanSpinnerValue = 1;
     flood_highSpinnerValue = flood_content.getElementById("highSpinnerFlood").value;
     floodCount = 0;
 }
@@ -818,15 +1293,7 @@ function startPointCallback(flag, x, y, dx, dy, dz) {
 
 }
 
-//**********交互式分析洪水淹没******end
-
-
-
-
-
-// function getFloodResult(data){
-//     alert(data);
-// }
+//***********************************************************************************交互式分析洪水淹没******end
 
 //停止分析功能
 function stopAnalysis() {
@@ -896,11 +1363,7 @@ function secondPnt(flag, x, y, dx, dy, dz) {
     globe.startAnalyzeTool(info);
 }
 
-
-
-
-
-//*******添加3d模型********start
+//********************************************************************************************添加3d模型********start
 function addPnt() {
     //移除鼠标事件
     globe.removeEventListener(EventType.LButtonDblClk, add3Dpoint);
@@ -931,23 +1394,21 @@ function removeAll3DElem() {
     globe.removeAll3DElement();
 }
 
-//*******添加3d模型********end
+//************************************************************************************************添加3d模型********end
 
 
-
-
-//******开启地层查询********start
-function findAttr(){
-    if(findAttrFlag){
+//*********************************************************************************************开启地层查询********start
+function findAttr() {
+    if (findAttrFlag) {
         PickModelReady();
         $("#findAttrIcon").removeClass("fa fa-toggle-off");
         $("#findAttrIcon").addClass("fa  fa-toggle-on");
-        findAttrFlag=false;
-    }else{
+        findAttrFlag = false;
+    } else {
         stopPickModelReady();
         $("#findAttrIcon").removeClass("fa  fa-toggle-on");
         $("#findAttrIcon").addClass("fa fa-toggle-off");
-        findAttrFlag=true;
+        findAttrFlag = true;
     }
 }
 
@@ -964,67 +1425,134 @@ function PickModelReady() {
 }
 
 function DataQuery(flag, x, y, dx, dy, dz) {
-    var queryParam = new G3DDocQuery();
-    //要素结果集每页的记录数量
-    queryParam.pageCount = '1000';
-    //被查询图层的gdbpUrl
-    queryParam.gdbp = encodeURI(QueryURL);
-    //设置查询条件
-    queryParam.geometryType = 'Point3D';
-    //点的坐标
-    queryParam.geometry = dx + "," + dy + "," + dz + ",0.1";
-    //指定查询结果的结构
-    queryParam.structs = '{"IncludeAttribute":true,"IncludeGeometry":false,"IncludeWebGraphic":false}';
-    // igs服务ip
-    queryParam.serverIp = IP;
-    //igs服务端口
-    queryParam.serverPort = "6163";
-    if (globe != null) {
-        //三维要素查询
-        if (openflag) {
-            globe.queryG3DFeature(queryParam, queryPolygonsCallback_modle, null, 'post');
-            openflag = false;
-            setTimeout(function () {
-                openflag = true;
-            }, 200);
+    if (openflag) {
+        var queryParam = new G3DDocQuery();
+        //要素结果集每页的记录数量
+        queryParam.pageCount = '1000';
+        //被查询图层的gdbpUrl
+        queryParam.gdbp = encodeURI(QueryURL);
+        if (modelFlag == "mpro" || modelFlag == "genv" || modelFlag == "unspace") {
+            queryParam.geometryType = 'Point';//二维查询条件
+            queryParam.geometry = dx + "," + dy + "," + ",0.1";//二维查询条件
+            alert(dx + "," + dy + "," + ",0.1");
+        } else if (modelFlag == "gdis") {
+            queryParam.geometryType = 'Point';//二维查询条件
+            $.ajax({
+                url: '/getNearestPoint',
+                type: 'post',
+                async: false,//使用同步的方式,true为异步方式
+                data: {modelFlag: modelFlag, dx: dx, dy: dy},//这里使用json对象
+                success: function (data) {
+                    if (data != null) {
+                        nearestX = data[0];
+                        nearestY = data[1];
+                        queryParam.geometry = nearestX.toFixed(2) + "," + nearestY.toFixed(2) + "," + ",0.1";//二维查询条件
+                    }
+                },
+                fail: function () {
+                }
+            });
+        } else {
+            //设置查询条件
+            queryParam.geometryType = 'Point3D';
+            //点的坐标
+            queryParam.geometry = dx + "," + dy + "," + dz + ",0.1";
         }
+        //指定查询结果的结构
+        queryParam.structs = '{"IncludeAttribute":true,"IncludeGeometry":false,"IncludeWebGraphic":false}';
+        // igs服务ip
+        queryParam.serverIp = IP;
+        //igs服务端口
+        queryParam.serverPort = port;
+        globe.queryG3DFeature(queryParam, queryPolygonsCallback_modle, null, 'post');
+        openflag = false;
+        setTimeout(function () {
+            openflag = true;
+        }, 200);
     }
 }
 
 function queryPolygonsCallback_modle(data) {
-    var content= document.frames['FloodControl'].document;
-    content.getElementById("attrs").innerHTML="";
+    var content = document.frames['FloodControl'].document;
+    content.getElementById("attrs").innerHTML = "";
     if (data.TotalCount > 0) {
-        for(var i=0;i<data.TotalCount;i++){
+        for (var i = 0; i < data.TotalCount; i++) {
             var objid = data.SFEleArray[i].FID;
             // var info = "LayerIndex:0,ObjID:" + objid + ",SddHandle:" + sceneID;
             // globe.startModelDiplay(info, 2, true);
             var att = data.AttStruct.FldName[0];
             var vaule = data.SFEleArray[0].AttValue[0];
             // content.getElementById("attrs").innerHTML+="<li data='"+objid+"' role='presentation'><a href='#'>"+objid+":"+att + "：" + vaule+"</a></li>";
-            content.getElementById("attrs").innerHTML+="<li data='"+objid+"' role='presentation'><a href='#'>"+objid+":"+"块体名称：" + "块体" + objid+"</a></li>";
+            content.getElementById("attrs").innerHTML += "<li data='" + objid + "' role='presentation'><a href='#'>" + objid + ":" + "名称：" + "模型" + objid + "</a></li>";
             // alert(att + "：" + vaule);
         }
-        FloodControl.window.ac()
-
+        FloodControl.window.ac();
     }
+
+
+    // if (data.TotalCount > 0) {
+    //     var polygons = new Array();
+    //     for (var datalength = 0; datalength < data.TotalCount; datalength++) {
+    //         var polygon = { "type": "polygon", "nelen": 1, "ne": [5], "dots": [] };
+    //         var dotArray = [];
+    //         var obj1 = Object();
+    //         obj1.x = data.SFEleArray[datalength].bound.xmin;
+    //         obj1.y = data.SFEleArray[datalength].bound.ymin;
+    //         dotArray.push(obj1);
+    //         var obj2 = Object();
+    //         obj2.x = data.SFEleArray[datalength].bound.xmax;
+    //         obj2.y = data.SFEleArray[datalength].bound.ymin;
+    //         dotArray.push(obj2);
+    //         var obj3 = Object();
+    //         obj3.x = data.SFEleArray[datalength].bound.xmax;
+    //         obj3.y = data.SFEleArray[datalength].bound.ymax;
+    //         dotArray.push(obj3);
+    //         var obj4 = Object();
+    //         obj4.x = data.SFEleArray[datalength].bound.xmin;
+    //         obj4.y = data.SFEleArray[datalength].bound.ymax;
+    //         dotArray.push(obj4);
+    //         var obj5 = Object();
+    //         obj5.x = data.SFEleArray[datalength].bound.xmin;
+    //         obj5.y = data.SFEleArray[datalength].bound.ymin;
+    //         dotArray.push(obj5);
+    //         polygon.dots = dotArray;
+    //         polygons.push(polygon);
+    //     }
+    //     // var param = { "maxsencez": range3D.zmax, "transparence": 50, "layerindex": [0], "sddentity": docid.toString(), "reg": polygons };
+    //     var param = { "maxsencez": 0, "transparence": 50, "layerindex": [0], "sddentity": GENVID.toString(), "reg": polygons };
+    //     var jsoninfo = JSON.stringify(param);
+    //     polygonProName = globe.analysis("Add", 3, jsoninfo);
+    // }
+
+
 }
 
 //高亮显示
 function sparkModel(objid) {
-    // globe.load();
+    globe.load();
+    if (QueryURL == kuai) {
+        var info = "LayerIndex:0,ObjID:" + objid + ",SddHandle:" + sceneID;
+        globe.startModelDiplay(info, 1, true);
+    } else if (QueryURL == duanceng) {
+        var info = "LayerIndex:23,ObjID:" + objid + ",SddHandle:" + DUANCENGID;
+        globe.startModelDiplay(info, 1, true);
+    } else if (QueryURL == po) {
+        var info = "LayerIndex:3,ObjID:" + objid + ",SddHandle:" + POID;
+        globe.startModelDiplay(info, 1, true);
+    } else if (QueryURL == gdis) {
+        var info = "LayerIndex:14,ObjID:" + objid + ",SddHandle:" + GDISID;
+        globe.startModelDiplay(info, 1, true);
+    }
 
-    var info = "LayerIndex:0,ObjID:" + objid + ",SddHandle:" + DUANCENGID;
-    globe.startModelDiplay(info, 1, true);
+
     // var info = {"docid": sceneID.toString(),"renderindex": 0,"oid": objid,"visible": 0};
     // globe.setSceneNode(JSON.stringify(info));
 
     $("#Attr").removeClass("control-none");
-    $("#Attr").attr("src","/attrInfo/"+objid);
-
+    $("#Attr").attr("src", "/attrInfo/" + modelFlag + "/" + objid);
 }
 
-
+//关闭属性查询
 function stopPickModelReady() {
     // alert("关闭地层查询");
     $("#FloodControl").addClass("control-none");
@@ -1033,12 +1561,18 @@ function stopPickModelReady() {
     globe.stopModelDisplayAll();
 }
 
-//***********开启地层查询end********end
+//关闭属性查询，但是不停止闪烁
+function stopPickModelReadyWithoutDisplay() {
+    // alert("关闭地层查询");
+    $("#FloodControl").addClass("control-none");
+    $("#Attr").addClass("control-none");
+    globe.removeEventListener(EventType.LButtonDblClk, DataQuery);
+}
+
+//**********************************************************************************************开启地层查询********end
 
 
-
-
-//******开启模型查询********start
+//********************************************************************************************开启模型查询********start
 
 function PickModel() {
     alert("开启全景模型查询");
@@ -1090,42 +1624,43 @@ function stopPickModel_M() {
     globe.stopModelDisplayAll();
 }
 
-//***********开启地层查询end********end
+//*******************************************************************************************开启模型查询********end
 
 function loadMap() {
-    var queryParam=new G3DDocQuery();
-    queryParam.pageCount='1000';
-    queryParam.gdbp=encodeURI(URL);
-    queryParam.where='';
-    queryParam.serverIp=ip;
-    queryParam.serverPort=port;
-    queryParam.structs='{"IncludeAttribute":true,"IncludeGeometry":false,"IncludeWebGraphic":false}';
+    var queryParam = new G3DDocQuery();
+    queryParam.pageCount = '1000';
+    queryParam.gdbp = encodeURI(URL);
+    queryParam.where = '';
+    queryParam.serverIp = ip;
+    queryParam.serverPort = port;
+    queryParam.structs = '{"IncludeAttribute":true,"IncludeGeometry":false,"IncludeWebGraphic":false}';
 
-    if(globe != null){
-        this.globle.queryG3DFeature(queryParam,queryPolygonsCallback,null,'post');
+    if (globe != null) {
+        this.globle.queryG3DFeature(queryParam, queryPolygonsCallback, null, 'post');
     }
 }
+
 function queryPolygonsCallback(data) {
-    for(var i=0;i<data.TotalCount;i++){
-        modelID=globe.appendGeomByUrl(URL,ip,port,data.SFEleArray[i].FID);
-        var model=new Object();
-        model.modelID=modelID;
-        model.FID=data.SFEleArray[i].FID;
+    for (var i = 0; i < data.TotalCount; i++) {
+        modelID = globe.appendGeomByUrl(URL, ip, port, data.SFEleArray[i].FID);
+        var model = new Object();
+        model.modelID = modelID;
+        model.FID = data.SFEleArray[i].FID;
         models.push(model);
 
-        if(modelID > 0){
+        if (modelID > 0) {
             globe.reset();
-        }else{
+        } else {
             alert("添加失败");
         }
     }
 }
 
 function flash() {
-    for(var i=0;i<models.length;i++){
-        if(models[i].FID==5){
-            var info="LayerIndex:0,ObjID:0"+"SddHandle:"+models[i].modelID;
-            globe.startModelDiplay(info,EnumModelDispType.Flash,true);
+    for (var i = 0; i < models.length; i++) {
+        if (models[i].FID == 5) {
+            var info = "LayerIndex:0,ObjID:0" + "SddHandle:" + models[i].modelID;
+            globe.startModelDiplay(info, EnumModelDispType.Flash, true);
         }
     }
 }
