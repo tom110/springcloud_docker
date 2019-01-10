@@ -2,6 +2,7 @@ package com.tom.casclient.controller;
 
 import com.tom.casclient.domain.GeologyDisaster;
 import com.tom.casclient.service.lmpl.GeologyDisasterService;
+import com.tom.casclient.service.lmpl.GeologyGroundWaterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +19,9 @@ import java.util.List;
 public class JsonController {
     @Autowired
     private GeologyDisasterService geologyDisasterService;
+
+    @Autowired
+    private GeologyGroundWaterService geologyGroundWaterService;
 
     @RequestMapping(value = "/getModelIds",method = RequestMethod.POST,produces="application/json")
     public List<Integer> getModelIds(@RequestParam("modelFlag") String modelFlag){
@@ -40,22 +44,33 @@ public class JsonController {
         List<Double> distances=new ArrayList<Double>();
         List<List<Double>> dxdy=new ArrayList<>();
         if(modelFlag.equalsIgnoreCase("gdis")){
-            List<GeologyDisaster> geologyDisasters= (List<GeologyDisaster>) geologyDisasterService.listAll();
-            geologyDisasters.stream().forEach(geologyDisaster -> {
-                Double x=dx- Double.parseDouble(geologyDisaster.getX());
-                Double y=dy-Double.parseDouble(geologyDisaster.getY());
-                distances.add(x*x+y*y );
-                List<Double> xy=new ArrayList<>();
-                xy.add(Double.parseDouble(geologyDisaster.getX()));
-                xy.add(Double.parseDouble(geologyDisaster.getY()));
-                dxdy.add(xy);
-            });
-            Double nearestDistance=Collections.min(distances);
-            if (nearestDistance<1000000){
-                return dxdy.get(distances.indexOf(nearestDistance));
-            }else{
-                return null;
-            }
+            return returnNearestPoint(dx, dy);
+        }else if(modelFlag.equalsIgnoreCase("underwater")){
+            return null;
+        }
+        else{
+            return null;
+        }
+    }
+
+    private List<Double> returnNearestPoint(@RequestParam("dx") double dx, @RequestParam("dy") double dy) {
+        List<Double> distances=new ArrayList<Double>();
+        List<List<Double>> dxdy=new ArrayList<>();
+        List<GeologyDisaster> geologyDisasters= (List<GeologyDisaster>) geologyDisasterService.listAll();
+        geologyDisasters.stream().forEach(geologyDisaster -> {
+            Double geox=Double.parseDouble(geologyDisaster.getX());
+            Double geoy=Double.parseDouble(geologyDisaster.getY());
+            Double x=dx- geox;
+            Double y=dy-geoy;
+            distances.add(x*x+y*y );
+            List<Double> xy=new ArrayList<>();
+            xy.add(geox);
+            xy.add(geoy);
+            dxdy.add(xy);
+        });
+        Double nearestDistance= Collections.min(distances);
+        if (nearestDistance<1000000){
+            return dxdy.get(distances.indexOf(nearestDistance));
         }else{
             return null;
         }

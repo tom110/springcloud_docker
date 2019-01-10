@@ -39,15 +39,15 @@ var unspace = "gdbp://MapGisLocal/sample/sfcls/地下空间10-30M3";
 
 var earthDisaster = "gdbp://MapGisLocal/地质灾害/sfcls/灾害点";
 var mineral = "gdbp://MapGisLocal/地质灾害/sfcls/矿产资源";
-var marineRanching = "gdbp://MapGisLocal/地质灾害/sfcls/海洋牧场";
-var groundWater = "gdbp://MapGisLocal/地质灾害/sfcls/地下水监测点";
-var geoThermal = "gdbp://MapGisLocal/地质灾害/sfcls/地热监测点";
+var marineranching = "gdbp://MapGisLocal/地质灾害/sfcls/海洋牧场";
+var groundwater = "gdbp://MapGisLocal/地质灾害/sfcls/地下水监测点";
+var geothermal = "gdbp://MapGisLocal/地质灾害/sfcls/地热监测点";
 
 var IP = "192.168.0.6";
 var port = "6163";
 var modelFlag = "kuai";
 var sceneID;
-var DEMID,POID,DUANCENGID, MPROID, UNSPACEID, GENVID, OBPID, GDISID,MINERALID,MARINERACHINGID,GROUNDWATERID,GEOTHERMALID;
+var DEMID,POID,DUANCENGID, MPROID, UNSPACEID, GENVID, OBPID, GDISID,MINERALID,MARINERANCHINGID,GROUNDWATERID,GEOTHERMALID;
 var map;
 var helpGeometry;
 var range3Dstr = "";
@@ -78,7 +78,7 @@ var genvShowFlag = false;
 var obpShowFlag = false;
 var gdisShowFlag = false;
 var mineralShowFlag=false;
-var marinearchingShowFlag=false;
+var marineranchingShowFlag=false;
 var groundwaterShowFlag=false;
 var geothermalShowFlag=false;
 
@@ -701,6 +701,169 @@ function manageObp() {
     }
 }
 
+
+//加载矿产资源
+function addMineral() {
+    globe.load();
+    MINERALID = globe.addDoc(mineralName, IP, port, DocType.TypeG3D);
+    if (MINERALID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL = mineral;
+    stopPickModelReady();
+    modelFlag = "mineral";
+}
+
+// 移除矿产资源
+function removeMineral() {
+    globe.load();
+    $("#Legend").addClass("control-none");
+    if (MINERALID > 0 || MINERALID) {
+        var doc = globe.getDocByName(mineralName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+}
+
+// 管理矿产资源
+function manageMineral() {
+    if (!mineralShowFlag) {
+        addMineral();
+        $("#mineralShow").removeClass("fa fa-toggle-off");
+        $("#mineralShow").addClass("fa fa-toggle-on");
+        mineralShowFlag = true;
+    } else {
+        removeMineral();
+        $("#mineralShow").removeClass("fa fa-toggle-on");
+        $("#mineralShow").addClass("fa fa-toggle-off");
+        mineralShowFlag = false;
+    }
+}
+
+
+
+//加载地下水监测点
+function addGroundwater() {
+    globe.load();
+    GROUNDWATERID = globe.addDoc(groundwaterName, IP, port, DocType.TypeG3D);
+    if (GROUNDWATERID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL = groundwater;
+    stopPickModelReady();
+    modelFlag = "groundwater";
+}
+
+// 移除地下水监测点
+function removeGroundwater() {
+    globe.load();
+    $("#Legend").addClass("control-none");
+    if (GROUNDWATERID > 0 || GROUNDWATERID) {
+        var doc = globe.getDocByName(groundwaterName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+}
+
+// 管理地下水监测点
+function manageGroundwater() {
+    if (!groundwaterShowFlag) {
+        addGroundwater();
+        $("#groundwaterShow").removeClass("fa fa-toggle-off");
+        $("#groundwaterShow").addClass("fa fa-toggle-on");
+        groundwaterShowFlag = true;
+    } else {
+        removeGroundwater();
+        $("#groundwaterShow").removeClass("fa fa-toggle-on");
+        $("#groundwaterShow").addClass("fa fa-toggle-off");
+        groundwaterShowFlag = false;
+    }
+}
+
+
+//加载地热监测点
+function addGeothermal() {
+    globe.load();
+    GEOTHERMALID = globe.addDoc(geothermalName, IP, port, DocType.TypeG3D);
+    if (GEOTHERMALID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL = geothermal;
+    stopPickModelReady();
+    modelFlag = "geothermal";
+}
+
+// 移除地热监测点
+function removeGeothermal() {
+    globe.load();
+    $("#Legend").addClass("control-none");
+    if (GEOTHERMALID > 0 || GEOTHERMALID) {
+        var doc = globe.getDocByName(geothermalName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+}
+
+// 管理地热监测点
+function manageGeothermal() {
+    if (!geothermalShowFlag) {
+        addGeothermal();
+        $("#geothermalShow").removeClass("fa fa-toggle-off");
+        $("#geothermalShow").addClass("fa fa-toggle-on");
+        geothermalShowFlag = true;
+    } else {
+        removeGeothermal();
+        $("#geothermalShow").removeClass("fa fa-toggle-on");
+        $("#geothermalShow").addClass("fa fa-toggle-off");
+        geothermalShowFlag = false;
+    }
+}
+
+//加载海洋牧场
+function addMarineranching() {
+    globe.load();
+    MARINERANCHINGID = globe.addDoc(marineranchingName, IP, port, DocType.TypeG3D);
+    if (MARINERANCHINGID < 0) {
+        alert("加载失败！");
+        return;
+    }
+    QueryURL = marineranching;
+    stopPickModelReady();
+    modelFlag = "marineranching";
+}
+
+// 移除海洋牧场
+function removeMarineranching() {
+    globe.load();
+    $("#Legend").addClass("control-none");
+    if (MARINERANCHINGID > 0 || MARINERANCHINGID) {
+        var doc = globe.getDocByName(marineranchingName);
+        if (!doc)
+            return false;
+        return globe.removeDocById(doc.id);
+    }
+}
+
+// 管理海洋牧场
+function manageMarineranching() {
+    if (!marineranchingShowFlag) {
+        addMarineranching();
+        $("#marineranchingShow").removeClass("fa fa-toggle-off");
+        $("#marineranchingShow").addClass("fa fa-toggle-on");
+        marineranchingShowFlag = true;
+    } else {
+        removeMarineranching();
+        $("#marineranchingShow").removeClass("fa fa-toggle-on");
+        $("#marineranchingShow").addClass("fa fa-toggle-off");
+        marineranchingShowFlag = false;
+    }
+}
 
 
 
@@ -1435,7 +1598,7 @@ function DataQuery(flag, x, y, dx, dy, dz) {
             queryParam.geometryType = 'Point';//二维查询条件
             queryParam.geometry = dx + "," + dy + "," + ",0.1";//二维查询条件
             alert(dx + "," + dy + "," + ",0.1");
-        } else if (modelFlag == "gdis") {
+        } else if (modelFlag == "gdis" || modelFlag=="groundwater" || modelFlag=="geothermal" || modelFlag=="marineranching" || modelFlag=="minermal") {
             queryParam.geometryType = 'Point';//二维查询条件
             $.ajax({
                 url: '/getNearestPoint',
