@@ -1,11 +1,10 @@
 package com.tom.casclient.domain;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-public class GeologyGeothermal extends GeologyModel{
+@Entity
+@Table(name="geologyGeothermal")
+public class GeologyGeothermal extends GeologyPointModel{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -16,10 +15,6 @@ public class GeologyGeothermal extends GeologyModel{
     private String jingdu;
     @Column
     private String weidu;
-    @Column
-    private String x;
-    @Column
-    private String y;
     @Column
     private String weizhi;
     @Column
@@ -149,22 +144,6 @@ public class GeologyGeothermal extends GeologyModel{
 
     public void setWeidu(String weidu) {
         this.weidu = weidu;
-    }
-
-    public String getX() {
-        return x;
-    }
-
-    public void setX(String x) {
-        this.x = x;
-    }
-
-    public String getY() {
-        return y;
-    }
-
-    public void setY(String y) {
-        this.y = y;
     }
 
     public String getWeizhi() {

@@ -3,8 +3,7 @@ package com.tom.casclient.controller;
 import com.tom.casclient.domain.*;
 import com.tom.casclient.service.GeoModelService;
 import com.tom.casclient.service.GeologyModelLayerService;
-import com.tom.casclient.service.lmpl.GeologyDisasterService;
-import org.json.simple.JSONArray;
+import com.tom.casclient.service.lmpl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -40,6 +37,18 @@ public class HomeController {
 
     @Autowired
     private GeologyDisasterService geologyDisasterService;
+
+    @Autowired
+    private GeologyGroundWaterService geologyGroundWaterService;
+
+    @Autowired
+    private GeologyGeothermalService geologyGeothermalService;
+
+    @Autowired
+    private GeologyMarineRanchingService geologyMarineRanchingService;
+
+    @Autowired
+    private GeologyMineralService geologyMineralService;
 
 
     @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
@@ -118,18 +127,33 @@ public class HomeController {
             return "";
     }
 
+    @GetMapping(value = "/showImage/{modelFlag}/number")
+    public String attrInfo(@PathVariable("modelFlag") String modelFlag,@PathVariable("number") String number, Model model){
+
+        return "ImageShow";
+    }
+
     @GetMapping(value = "/attrInfo/{modelFlag}/{objid}")
     public String attrInfo(@PathVariable("objid") Integer objid,@PathVariable("modelFlag") String modelFlag, Model model){
-        if(modelFlag.equals("kuai")){
+        if(modelFlag.equalsIgnoreCase("kuai")){
             getRequestModel_Bisect(objid, model,geologyBisectLayerService,new GeologyBisectLayer());
-        }else if(modelFlag.equals("duan")){
+        }else if(modelFlag.equalsIgnoreCase("duan")){
             getRequestModel_Disrupt(objid,model, geologyDisruptLayerService,new GeologyDisruptLayer());
-        }else if(modelFlag.equals("po")){
+        }else if(modelFlag.equalsIgnoreCase("po")){
             getRequestModel_Section(objid,model, GeologySectionLayerService,new GeologySectionLayer());
-        }else if(modelFlag.equals("gdis")){
+        }else if(modelFlag.equalsIgnoreCase("gdis")){
             getRequestModel_disaster(objid,model, geologyDisasterService,new GeologyDisaster());
+        }else if(modelFlag.equalsIgnoreCase("marineranching")){
+            getRequestModel_Marineranching(objid,model, geologyMarineRanchingService,new GeologyMarineranching());
+        }else if(modelFlag.equalsIgnoreCase("groundwater")){
+            getRequestModel_Groundwater(objid,model, geologyGroundWaterService,new GeologyGroundwater());
+        }else if(modelFlag.equalsIgnoreCase("mineral")){
+            getRequestModel_Mineral(objid,model, geologyMineralService,new GeologyMineral());
+        }else if(modelFlag.equalsIgnoreCase("geothermal")){
+            getRequestModel_Geothermal(objid,model, geologyGeothermalService,new GeologyGeothermal());
         }
 
+        model.addAttribute("modelFlag",modelFlag);
         return "attrInfo";
     }
 
@@ -196,9 +220,9 @@ public class HomeController {
 
         Map<Integer,String> geologyBisectLayerIndex=new HashMap<Integer, String>();
         Map<Integer,Integer> geologyBisectLayerStatus=new HashMap<>();
-        for(Integer i=1;i<= GeologyBisectLayer.Cp.values().length;i++){
-            geologyBisectLayerIndex.put(i,GeologyBisectLayer.Cp.getCpByOrder(i));
-            geologyBisectLayerStatus.put(i,GeologyBisectLayer.Cp.getStatusByOrder(i));
+        for(Integer i=1;i<= GeologyDisruptLayer.Cp.values().length;i++){
+            geologyBisectLayerIndex.put(i,GeologyDisruptLayer.Cp.getCpByOrder(i));
+            geologyBisectLayerStatus.put(i,GeologyDisruptLayer.Cp.getStatusByOrder(i));
         }
         model.addAttribute("geologyBisectLayer",geologyBisectLayerIndex);
         model.addAttribute("geologyBisectLayerStatus",geologyBisectLayerStatus);
@@ -233,9 +257,9 @@ public class HomeController {
 
         Map<Integer,String> geologyBisectLayerIndex=new HashMap<Integer, String>();
         Map<Integer,Integer> geologyBisectLayerStatus=new HashMap<>();
-        for(Integer i=1;i<= GeologyBisectLayer.Cp.values().length;i++){
-            geologyBisectLayerIndex.put(i,GeologyBisectLayer.Cp.getCpByOrder(i));
-            geologyBisectLayerStatus.put(i,GeologyBisectLayer.Cp.getStatusByOrder(i));
+        for(Integer i=1;i<= GeologySectionLayer.Cp.values().length;i++){
+            geologyBisectLayerIndex.put(i,GeologySectionLayer.Cp.getCpByOrder(i));
+            geologyBisectLayerStatus.put(i,GeologySectionLayer.Cp.getStatusByOrder(i));
         }
         model.addAttribute("geologyBisectLayer",geologyBisectLayerIndex);
         model.addAttribute("geologyBisectLayerStatus",geologyBisectLayerStatus);
@@ -244,7 +268,6 @@ public class HomeController {
         model.addAttribute("objid", objid);
         model.addAttribute("fieldWithValue", fieldWithValue);
     }
-
 
     //处理地质灾害
     private void getRequestModel_disaster(@PathVariable("objid") Integer objid, Model model, GeoModelService geoModelService, GeologyModel geoModel) {
@@ -282,6 +305,156 @@ public class HomeController {
         model.addAttribute("objid", objid);
         model.addAttribute("fieldWithValue", fieldWithValue);
     }
+
+    //处理海洋牧场
+    private void getRequestModel_Marineranching(@PathVariable("objid") Integer objid, Model model, GeoModelService geoModelService, GeologyModel geoModel) {
+        GeologyModel geologyModel = geoModelService.getGeologyModel(objid);
+        //属性字段对应字典
+        Map<String, Object> fieldWithValue = new HashMap<>();
+        //属性和属性别名字典
+        Map<String, String> fieds = new HashMap<String, String>();
+        if (geologyModel == null) {
+            Field[] fields = geoModel.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                fieds.put(GeologyMarineranching.Cp.getName(field.getName()), field.getName());
+                fieldWithValue.put(field.getName(), null);
+            }
+        } else {
+            Field[] fields = geologyModel.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                fieds.put(GeologyMarineranching.Cp.getName(field.getName()), field.getName());
+                fieldWithValue.put(field.getName(), getFieldValueByFieldName(field.getName(), geologyModel));
+            }
+        }
+        model.addAttribute("fields", fieds);
+        model.addAttribute("cpCount",GeologyMarineranching.Cp.values().length);
+
+        Map<Integer,String> geologyBisectLayerIndex=new HashMap<Integer, String>();
+        Map<Integer,Integer> geologyBisectLayerStatus=new HashMap<>();
+        for(Integer i=1;i<= GeologyMarineranching.Cp.values().length;i++){
+            geologyBisectLayerIndex.put(i,GeologyMarineranching.Cp.getCpByOrder(i));
+            geologyBisectLayerStatus.put(i,GeologyMarineranching.Cp.getStatusByOrder(i));
+        }
+        model.addAttribute("geologyBisectLayer",geologyBisectLayerIndex);
+        model.addAttribute("geologyBisectLayerStatus",geologyBisectLayerStatus);
+
+        model.addAttribute("modelFlag","saveGeologyBisect");
+        model.addAttribute("objid", objid);
+        model.addAttribute("fieldWithValue", fieldWithValue);
+    }
+
+    //处理地下水监测
+    private void getRequestModel_Groundwater(@PathVariable("objid") Integer objid, Model model, GeoModelService geoModelService, GeologyModel geoModel) {
+        GeologyModel geologyModel = geoModelService.getGeologyModel(objid);
+        //属性字段对应字典
+        Map<String, Object> fieldWithValue = new HashMap<>();
+        //属性和属性别名字典
+        Map<String, String> fieds = new HashMap<String, String>();
+        if (geologyModel == null) {
+            Field[] fields = geoModel.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                fieds.put(GeologyGroundwater.Cp.getName(field.getName()), field.getName());
+                fieldWithValue.put(field.getName(), null);
+            }
+        } else {
+            Field[] fields = geologyModel.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                fieds.put(GeologyGroundwater.Cp.getName(field.getName()), field.getName());
+                fieldWithValue.put(field.getName(), getFieldValueByFieldName(field.getName(), geologyModel));
+            }
+        }
+        model.addAttribute("fields", fieds);
+        model.addAttribute("cpCount",GeologyGroundwater.Cp.values().length);
+
+        Map<Integer,String> geologyBisectLayerIndex=new HashMap<Integer, String>();
+        Map<Integer,Integer> geologyBisectLayerStatus=new HashMap<>();
+        for(Integer i=1;i<= GeologyGroundwater.Cp.values().length;i++){
+            geologyBisectLayerIndex.put(i,GeologyGroundwater.Cp.getCpByOrder(i));
+            geologyBisectLayerStatus.put(i,GeologyGroundwater.Cp.getStatusByOrder(i));
+        }
+        model.addAttribute("geologyBisectLayer",geologyBisectLayerIndex);
+        model.addAttribute("geologyBisectLayerStatus",geologyBisectLayerStatus);
+
+        model.addAttribute("modelFlag","saveGeologyBisect");
+        model.addAttribute("objid", objid);
+        model.addAttribute("fieldWithValue", fieldWithValue);
+    }
+
+    //处理地热监测
+    private void getRequestModel_Geothermal(@PathVariable("objid") Integer objid, Model model, GeoModelService geoModelService, GeologyModel geoModel) {
+        GeologyModel geologyModel = geoModelService.getGeologyModel(objid);
+        //属性字段对应字典
+        Map<String, Object> fieldWithValue = new HashMap<>();
+        //属性和属性别名字典
+        Map<String, String> fieds = new HashMap<String, String>();
+        if (geologyModel == null) {
+            Field[] fields = geoModel.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                fieds.put(GeologyGeothermal.Cp.getName(field.getName()), field.getName());
+                fieldWithValue.put(field.getName(), null);
+            }
+        } else {
+            Field[] fields = geologyModel.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                fieds.put(GeologyGeothermal.Cp.getName(field.getName()), field.getName());
+                fieldWithValue.put(field.getName(), getFieldValueByFieldName(field.getName(), geologyModel));
+            }
+        }
+        model.addAttribute("fields", fieds);
+        model.addAttribute("cpCount",GeologyGeothermal.Cp.values().length);
+
+        Map<Integer,String> geologyBisectLayerIndex=new HashMap<Integer, String>();
+        Map<Integer,Integer> geologyBisectLayerStatus=new HashMap<>();
+        for(Integer i=1;i<= GeologyGeothermal.Cp.values().length;i++){
+            geologyBisectLayerIndex.put(i,GeologyGeothermal.Cp.getCpByOrder(i));
+            geologyBisectLayerStatus.put(i,GeologyGeothermal.Cp.getStatusByOrder(i));
+        }
+        model.addAttribute("geologyBisectLayer",geologyBisectLayerIndex);
+        model.addAttribute("geologyBisectLayerStatus",geologyBisectLayerStatus);
+
+        model.addAttribute("modelFlag","saveGeologyBisect");
+        model.addAttribute("objid", objid);
+        model.addAttribute("fieldWithValue", fieldWithValue);
+    }
+
+    //处理矿产点
+    private void getRequestModel_Mineral(@PathVariable("objid") Integer objid, Model model, GeoModelService geoModelService, GeologyModel geoModel) {
+        GeologyModel geologyModel = geoModelService.getGeologyModel(objid);
+        //属性字段对应字典
+        Map<String, Object> fieldWithValue = new HashMap<>();
+        //属性和属性别名字典
+        Map<String, String> fieds = new HashMap<String, String>();
+        if (geologyModel == null) {
+            Field[] fields = geoModel.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                fieds.put(GeologyMineral.Cp.getName(field.getName()), field.getName());
+                fieldWithValue.put(field.getName(), null);
+            }
+        } else {
+            Field[] fields = geologyModel.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                fieds.put(GeologyMineral.Cp.getName(field.getName()), field.getName());
+                fieldWithValue.put(field.getName(), getFieldValueByFieldName(field.getName(), geologyModel));
+            }
+        }
+        model.addAttribute("fields", fieds);
+        model.addAttribute("cpCount",GeologyMineral.Cp.values().length);
+
+        Map<Integer,String> geologyBisectLayerIndex=new HashMap<Integer, String>();
+        Map<Integer,Integer> geologyBisectLayerStatus=new HashMap<>();
+        for(Integer i=1;i<= GeologyMineral.Cp.values().length;i++){
+            geologyBisectLayerIndex.put(i,GeologyMineral.Cp.getCpByOrder(i));
+            geologyBisectLayerStatus.put(i,GeologyMineral.Cp.getStatusByOrder(i));
+        }
+        model.addAttribute("geologyBisectLayer",geologyBisectLayerIndex);
+        model.addAttribute("geologyBisectLayerStatus",geologyBisectLayerStatus);
+
+        model.addAttribute("modelFlag","saveGeologyBisect");
+        model.addAttribute("objid", objid);
+        model.addAttribute("fieldWithValue", fieldWithValue);
+    }
+
+
 
     private Object getFieldValueByFieldName(String fieldName,Object o){
         try{

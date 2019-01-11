@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="geologyGroundwater")
-public class GeologyGroundwater extends GeologyModel{
+public class GeologyGroundwater extends GeologyPointModel{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -15,10 +15,6 @@ public class GeologyGroundwater extends GeologyModel{
     private String jingdu;
     @Column
     private String weidu;
-    @Column
-    private String x;
-    @Column
-    private String y;
     @Column
     private String weizhi;
     @Column
@@ -40,9 +36,9 @@ public class GeologyGroundwater extends GeologyModel{
         y("Y","y",6,1),
         weizhi("位置","weizhi",7,1),
         jiancejibie("检测级别","jiancejibie",8,1),
-        guimo("地下水类型","guimo",9,1),
-        jianceneirong("检测内容","wendingxing",10,1),
-        jianceleixing("检测类型","jianceleixing",10,1);
+        dixiashuileixing("地下水类型","dixiashuileixing",9,1),
+        jianceneirong("检测内容","jianceneirong",10,1),
+        jianceleixing("检测类型","jianceleixing",11,1);
 
 
         private String name;
@@ -148,22 +144,6 @@ public class GeologyGroundwater extends GeologyModel{
 
     public void setWeidu(String weidu) {
         this.weidu = weidu;
-    }
-
-    public String getX() {
-        return x;
-    }
-
-    public void setX(String x) {
-        this.x = x;
-    }
-
-    public String getY() {
-        return y;
-    }
-
-    public void setY(String y) {
-        this.y = y;
     }
 
     public String getWeizhi() {

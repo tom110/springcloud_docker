@@ -47,15 +47,11 @@ public class AttrController {
         return fieds;
     }
 
-
-
     @RequestMapping(value = "/saveGeologyModel",method = RequestMethod.POST)
     public String saveGeologyModel(GeologyModelLayer geologyModelLayer){
         geologyModelLayerService.saveOrUpdate(geologyModelLayer);
         return  "redirect:/attrInfo/"+geologyModelLayer.getObjid();
     }
-
-
 
     //断层部分//
     @RequestMapping(value = "/getGeologyBisectLayer", method = RequestMethod.POST,produces="application/json")

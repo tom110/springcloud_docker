@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="geologyDisaster")
-public class GeologyDisaster extends GeologyModel{
+public class GeologyDisaster extends GeologyPointModel{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -15,10 +15,6 @@ public class GeologyDisaster extends GeologyModel{
     private String jingdu;
     @Column
     private String weidu;
-    @Column
-    private String x;
-    @Column
-    private String y;
     @Column
     private String mingcheng;
     @Column
@@ -32,11 +28,11 @@ public class GeologyDisaster extends GeologyModel{
     //描述类的字段
     public static enum Cp{
         id("序号","id",1,0),
-        yewaibianhao("野外编号","yewaibianhao",2,1),
+        yewaibianhao("野外编号","yewaibianhao",2,3),
         jingdu("经度","jingdu",3,1),
         weidu("纬度","weidu",4,1),
-        x("X","x",5,1),
-        y("Y","y",6,1),
+        x("X","x",5,0),
+        y("Y","y",6,0),
         mingcheng("名称","mingcheng",7,1),
         zaihaileixing("灾害类型","zaihaileixing",8,1),
         guimo("规模","guimo",9,1),
@@ -114,7 +110,6 @@ public class GeologyDisaster extends GeologyModel{
 
     }
 
-
     public Integer getId() {
         return id;
     }
@@ -145,22 +140,6 @@ public class GeologyDisaster extends GeologyModel{
 
     public void setWeidu(String weidu) {
         this.weidu = weidu;
-    }
-
-    public String getX() {
-        return x;
-    }
-
-    public void setX(String x) {
-        this.x = x;
-    }
-
-    public String getY() {
-        return y;
-    }
-
-    public void setY(String y) {
-        this.y = y;
     }
 
     public String getMingcheng() {

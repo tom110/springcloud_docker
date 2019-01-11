@@ -98,7 +98,7 @@ public class GeologyDisruptLayer extends GeologyModel{
         }
 
         public static Integer getStatusByOrder(Integer order){
-            for(GeologyBisectLayer.Cp cp: GeologyBisectLayer.Cp.values()){
+            for(GeologyDisruptLayer.Cp cp: GeologyDisruptLayer.Cp.values()){
                 if(cp.getOrder()==order){
                     return cp.getStatus();
                 }

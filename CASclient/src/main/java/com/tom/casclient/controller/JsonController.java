@@ -1,8 +1,9 @@
 package com.tom.casclient.controller;
 
 import com.tom.casclient.domain.GeologyDisaster;
-import com.tom.casclient.service.lmpl.GeologyDisasterService;
-import com.tom.casclient.service.lmpl.GeologyGroundWaterService;
+import com.tom.casclient.domain.GeologyPointModel;
+import com.tom.casclient.service.GeoModelService;
+import com.tom.casclient.service.lmpl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,15 @@ public class JsonController {
     @Autowired
     private GeologyGroundWaterService geologyGroundWaterService;
 
+    @Autowired
+    private GeologyGeothermalService geologyGeothermalService;
+
+    @Autowired
+    private GeologyMarineRanchingService geologyMarineRanchingService;
+
+    @Autowired
+    private GeologyMineralService geologyMineralService;
+
     @RequestMapping(value = "/getModelIds",method = RequestMethod.POST,produces="application/json")
     public List<Integer> getModelIds(@RequestParam("modelFlag") String modelFlag){
         List<GeologyDisaster> geologyDisasters=null;
@@ -41,25 +51,29 @@ public class JsonController {
     public List<Double> getNearestPoint(@RequestParam("modelFlag") String modelFlag,
                                         @RequestParam("dx") double dx,
                                         @RequestParam("dy") double dy){
-        List<Double> distances=new ArrayList<Double>();
-        List<List<Double>> dxdy=new ArrayList<>();
         if(modelFlag.equalsIgnoreCase("gdis")){
-            return returnNearestPoint(dx, dy);
-        }else if(modelFlag.equalsIgnoreCase("underwater")){
-            return null;
+            return returnNearestPoint(dx, dy,geologyDisasterService);
+        }else if(modelFlag.equalsIgnoreCase("groundwater")){
+            return returnNearestPoint(dx, dy,geologyGroundWaterService);
+        }else if(modelFlag.equalsIgnoreCase("geothermal")){
+            return returnNearestPoint(dx, dy,geologyGeothermalService);
+        }else if(modelFlag.equalsIgnoreCase("mineral")){
+            return returnNearestPoint(dx, dy,geologyMineralService);
+        }else if(modelFlag.equalsIgnoreCase("marineranching")){
+            return returnNearestPoint(dx, dy,geologyMarineRanchingService);
         }
         else{
             return null;
         }
     }
 
-    private List<Double> returnNearestPoint(@RequestParam("dx") double dx, @RequestParam("dy") double dy) {
+    private List<Double> returnNearestPoint(@RequestParam("dx") double dx, @RequestParam("dy") double dy, GeoModelService geoModelService) {
         List<Double> distances=new ArrayList<Double>();
         List<List<Double>> dxdy=new ArrayList<>();
-        List<GeologyDisaster> geologyDisasters= (List<GeologyDisaster>) geologyDisasterService.listAll();
-        geologyDisasters.stream().forEach(geologyDisaster -> {
-            Double geox=Double.parseDouble(geologyDisaster.getX());
-            Double geoy=Double.parseDouble(geologyDisaster.getY());
+        List<GeologyPointModel> GeologyPointModels= (List<GeologyPointModel>) geoModelService.listAll();
+        GeologyPointModels.stream().forEach(geologyPointModel -> {
+            Double geox=Double.parseDouble(geologyPointModel.getX());
+            Double geoy=Double.parseDouble(geologyPointModel.getY());
             Double x=dx- geox;
             Double y=dy-geoy;
             distances.add(x*x+y*y );

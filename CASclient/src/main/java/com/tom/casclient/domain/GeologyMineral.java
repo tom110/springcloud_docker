@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="geologyMineral")
-public class GeologyMineral extends GeologyModel{
+public class GeologyMineral extends GeologyPointModel{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -31,10 +31,6 @@ public class GeologyMineral extends GeologyModel{
     private String toufangshixu;
     @Column
     private String beizhu;
-    @Column
-    private String x;
-    @Column
-    private String y;
 
 
     //描述类的字段
@@ -49,10 +45,10 @@ public class GeologyMineral extends GeologyModel{
         shezhileixing("设置类型","shezhileixing",8,1),
         ziyuanchuliangdanwei("资源储量单位","ziyuanchuliangdanwei",9,1),
         chamingchuliang("查明(占用)储量","chamingchuliang",10,1),
-        toufangshixu("投放时序","toufangshixu",10,1),
-        beizhu("备注","beizhu",10,1),
-        x("x","x",10,1),
-        y("y","y",10,1);
+        toufangshixu("投放时序","toufangshixu",11,1),
+        beizhu("备注","beizhu",12,1),
+        x("x","x",13,1),
+        y("y","y",14,1);
 
         private String name;
         private String index;
@@ -125,7 +121,6 @@ public class GeologyMineral extends GeologyModel{
         }
 
     }
-
 
 
     public Integer getId() {

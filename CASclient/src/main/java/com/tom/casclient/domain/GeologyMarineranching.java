@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="geologyMarineranching")
-public class GeologyMarineranching extends GeologyModel{
+public class GeologyMarineranching extends GeologyPointModel{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -21,20 +21,16 @@ public class GeologyMarineranching extends GeologyModel{
     private String jingdudd;
     @Column
     private String weidudd;
-    @Column
-    private String x;
-    @Column
-    private String y;
 
     //描述类的字段
     public static enum Cp{
         id("序号","id",1,0),
-        yewaibianhao("区域","yewaibianhao",2,1),
+        quyu("区域","quyu",2,1),
         leixing("类型","leixing",3,1),
         jingdu("经度","jingdu",4,1),
         weidu("纬度","weidu",5,1),
         jingdudd("经度（DDMMSS.SS）","jingdudd",6,1),
-        getWeidudd("纬度（DDMMSS.SS）","getWeidudd",7,1),
+        weidudd("纬度（DDMMSS.SS）","weidudd",7,1),
         x("X","x",8,1),
         y("Y","y",9,1);
 
@@ -165,21 +161,5 @@ public class GeologyMarineranching extends GeologyModel{
 
     public void setWeidudd(String weidudd) {
         this.weidudd = weidudd;
-    }
-
-    public String getX() {
-        return x;
-    }
-
-    public void setX(String x) {
-        this.x = x;
-    }
-
-    public String getY() {
-        return y;
-    }
-
-    public void setY(String y) {
-        this.y = y;
     }
 }

@@ -1597,8 +1597,7 @@ function DataQuery(flag, x, y, dx, dy, dz) {
         if (modelFlag == "mpro" || modelFlag == "genv" || modelFlag == "unspace") {
             queryParam.geometryType = 'Point';//二维查询条件
             queryParam.geometry = dx + "," + dy + "," + ",0.1";//二维查询条件
-            alert(dx + "," + dy + "," + ",0.1");
-        } else if (modelFlag == "gdis" || modelFlag=="groundwater" || modelFlag=="geothermal" || modelFlag=="marineranching" || modelFlag=="minermal") {
+        } else if (modelFlag == "gdis" || modelFlag=="groundwater" || modelFlag=="geothermal" || modelFlag=="marineranching" || modelFlag=="mineral") {
             queryParam.geometryType = 'Point';//二维查询条件
             $.ajax({
                 url: '/getNearestPoint',
